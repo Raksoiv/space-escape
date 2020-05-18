@@ -3,8 +3,14 @@ import random
 import pygame
 
 
+class DifficultyLevel:
+    EASY = 1
+    MEDIUM = 2
+    HARD = 3
+
+
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, screen_limits):
+    def __init__(self, screen_limits, difficult=1):
         # Super init
         super().__init__()
 
@@ -42,7 +48,12 @@ class Enemy(pygame.sprite.Sprite):
             )
         )
 
-        self.speed = random.randint(5, 20)
+        if difficult == DifficultyLevel.EASY:
+            self.speed = random.randint(5, 10)
+        elif difficult == DifficultyLevel.MEDIUM:
+            self.speed = random.randint(5, 20)
+        else:
+            self.speed = random.randint(5, 25)
 
     def update(self):
         self.rect.move_ip(-self.speed, 0)

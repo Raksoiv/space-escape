@@ -4,80 +4,101 @@ import pygame
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 
 from player import Player
-from enemy import Enemy
+from enemy import Enemy, DifficultyLevel
+from high_score import HighScore
 
-# Initialize pygame
-pygame.init()
 
-# Clock
-clock = pygame.time.Clock()
+class SpaceEscape:
+    def __init__(self, width=800, height=600, diffculty=DifficultyLevel.EASY):
+        self.width, self.height = width, height
+        # Initialize pygame
+        pygame.init()
 
-# Define constants for the screen width and height
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+        # Clock
+        self.clock = pygame.time.Clock()
 
-# Create the screen object
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        # Create the screen object
+        self.screen = pygame.display.set_mode((self.width, self.height))
 
-# Create a custom event for adding a new enemy
-ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 250)
+        # Create a custom event for adding a new enemy
+        self.add_enemy = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.add_enemy, 300 * diffculty)
 
-# Variable to keep the main loop running
-running = True
+        # Variable to keep the main loop running
+        self.running = True
 
-# Initialize external objects
-player = Player(screen_limits=(SCREEN_WIDTH, SCREEN_HEIGHT))
+        # Initialize external objects
+        self.player = Player(screen_limits=(width, height))
+        self.score = HighScore()
+        self.enemies = pygame.sprite.Group()
 
-enemies = pygame.sprite.Group()
-all_sprites = pygame.sprite.Group()
-all_sprites.add(player)
+        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites.add(self.player)
 
-# Main loop
-while running:
-    # Event catch
-    # Look at every event in the queue
-    for event in pygame.event.get():
-        # Did the user hit a key?
-        if event.type == KEYDOWN:
-            # Was it the Escape key? If so, stop the loop.
-            if event.key == K_ESCAPE:
-                running = False
-        # Did the user click the window close button? If so, stop the loop.
-        elif event.type == QUIT:
-            running = False
-        # Add a new enemy?
-        elif event.type == ADDENEMY:
-            # Create the new enemy and add it to sprite groups
-            new_enemy = Enemy(screen_limits=(SCREEN_WIDTH, SCREEN_HEIGHT))
-            enemies.add(new_enemy)
-            all_sprites.add(new_enemy)
-    # Get the set of keys pressed and check for user input
-    pressed_keys = pygame.key.get_pressed()
+    def event_fase(self):
+        # Look at every event in the queue
+        for event in pygame.event.get():
+            # Did the user hit a key?
+            if event.type == KEYDOWN:
+                # Was it the Escape key? If so, stop the loop.
+                if event.key == K_ESCAPE:
+                    self.running = False
+            # Did the user click the window close button? If so, stop the loop.
+            elif event.type == QUIT:
+                self.running = False
+            # Add a new enemy?
+            elif event.type == self.add_enemy:
+                # Create the new enemy and add it to sprite groups
+                new_enemy = Enemy(
+                    screen_limits=(self.width, self.height),
+                )
+                self.enemies.add(new_enemy)
+                self.all_sprites.add(new_enemy)
 
-    # Update the objects
-    # Update the player sprite based on user keypresses
-    player.update(pressed_keys)
-    # Update enemy position
-    enemies.update()
+    def update_face(self):
+        # Get the set of keys pressed and check for user input
+        pressed_keys = pygame.key.get_pressed()
 
-    # Render
-    # Fill the screen with white
-    screen.fill((0, 0, 0))
+        # Update the objects
+        # Update the player sprite based on user keypresses
+        self.player.update(pressed_keys)
+        # Get the number of enemies
+        n_enemies = len(self.enemies)
+        # Update enemy position
+        self.enemies.update()
+        # Update score
+        self.score.update()
 
-    # Merge the surf Surface with the screen
-    for entity in all_sprites:
-        screen.blit(entity.surf, entity.rect)
+    def render_fase(self):
+        # Fill the screen with white
+        self.screen.fill((0, 0, 0))
 
-    # Collide detection
-    if pygame.sprite.spritecollideany(player, enemies):
-        player.kill()
-        running = False
+        # Merge the surf Surface with the screen
+        for entity in self.all_sprites:
+            self.screen.blit(entity.surf, entity.rect)
 
-    # Redraw the screen
-    pygame.display.flip()
+        self.screen.blit(self.score.surf, self.score.rect)
 
-    # Ensure frame rate
-    clock.tick(60)
+        # Collide detection
+        if pygame.sprite.spritecollideany(self.player, self.enemies):
+            self.player.kill()
+            self.running = False
 
-pygame.quit()
+        # Redraw the screen
+        pygame.display.flip()
+
+    def main_loop(self):
+        # Event catch
+        self.event_fase()
+
+        # Update fase
+        self.update_face()
+
+        # Render fase
+        self.render_fase()
+
+        # Ensure frame rate
+        self.clock.tick(60)
+
+    def quit(self):
+        pygame.quit()
