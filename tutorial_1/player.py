@@ -1,9 +1,8 @@
-from pygame import Surface
-from pygame.locals import K_DOWN, K_LEFT, K_RIGHT, K_UP
-from pygame.sprite import Sprite
+import pygame
+from pygame.locals import K_DOWN, K_LEFT, K_RIGHT, K_UP, RLEACCEL
 
 
-class Player(Sprite):
+class Player(pygame.sprite.Sprite):
     def __init__(self, screen_limits):
         # Super init
         super().__init__()
@@ -12,11 +11,18 @@ class Player(Sprite):
         self.screen_width = screen_limits[0]
         self.screen_height = screen_limits[1]
 
-        # Set the plater surface
-        self.surf = Surface((75, 25))
-
-        # Set color White
-        self.surf.fill((255, 255, 255))
+        # Added the image to the Player
+        image = pygame.image.load('assets/playerShip1_blue.png')
+        image = pygame.transform.scale(
+            image,
+            (
+                int(image.get_rect().width * .5),
+                int(image.get_rect().height * .5)
+            )
+        )
+        image = pygame.transform.rotate(image, -90)
+        self.surf = image.convert()
+        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
 
         # Set the player rect
         self.rect = self.surf.get_rect()

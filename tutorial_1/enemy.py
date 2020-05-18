@@ -1,10 +1,9 @@
 import random
 
-from pygame import Surface
-from pygame.sprite import Sprite
+import pygame
 
 
-class Enemy(Sprite):
+class Enemy(pygame.sprite.Sprite):
     def __init__(self, screen_limits):
         # Super init
         super().__init__()
@@ -13,11 +12,26 @@ class Enemy(Sprite):
         self.screen_width = screen_limits[0]
         self.screen_height = screen_limits[1]
 
-        # Set the plater surface
-        self.surf = Surface((75, 25))
+        images = [
+            pygame.image.load(image)
+            for image in [
+                'assets/meteorBrown_small1.png',
+                'assets/meteorBrown_small2.png',
+                'assets/meteorBrown_tiny1.png',
+                'assets/meteorBrown_tiny2.png',
+            ]
+        ]
+        images = [
+            pygame.transform.scale(
+                image,
+                (
+                    int(image.get_rect().width * 1),
+                    int(image.get_rect().height * 1)
+                )
+            ) for image in images
+        ]
 
-        # Set color White
-        self.surf.fill((255, 255, 255))
+        self.surf = images[random.randint(0, 3)].convert()
 
         # Set the enemy starting point
         self.rect = self.surf.get_rect(
