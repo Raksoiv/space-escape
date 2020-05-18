@@ -3,7 +3,7 @@ import time
 import pygame
 
 
-class HighScore:
+class Score:
     def __init__(self):
         # Create the font
         self.font = pygame.font.SysFont("Sans", 36)

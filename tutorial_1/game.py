@@ -5,7 +5,7 @@ from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 
 from player import Player
 from enemy import Enemy, DifficultyLevel
-from high_score import HighScore
+from score import Score
 
 
 class SpaceEscape:
@@ -29,7 +29,7 @@ class SpaceEscape:
 
         # Initialize external objects
         self.player = Player(screen_limits=(width, height))
-        self.score = HighScore()
+        self.score = Score()
         self.enemies = pygame.sprite.Group()
 
         self.all_sprites = pygame.sprite.Group()
@@ -99,6 +99,15 @@ class SpaceEscape:
 
         # Ensure frame rate
         self.clock.tick(60)
+
+    def start(self):
+        # Clean the event queue before start the game
+        for _ in pygame.event.get():
+            pass
+        while self.running:
+            self.main_loop()
+
+        self.quit()
 
     def quit(self):
         pygame.quit()
