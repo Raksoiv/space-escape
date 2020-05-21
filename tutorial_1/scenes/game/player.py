@@ -1,10 +1,14 @@
 import pygame
-from pygame.locals import K_DOWN, K_LEFT, K_RIGHT, K_UP, RLEACCEL
+from pygame.image import load
+from pygame.key import get_pressed
+from pygame.locals import (K_DOWN, K_LEFT, K_RIGHT, K_UP, KEYDOWN, KEYUP,
+                           RLEACCEL)
+from pygame.sprite import Sprite
+from pygame.transform import rotate, scale
 
 
-class Player(pygame.sprite.Sprite):
+class Player(Sprite):
     def __init__(self, screen_limits):
-        # Super init
         super().__init__()
 
         # Set the screen size
@@ -12,22 +16,26 @@ class Player(pygame.sprite.Sprite):
         self.screen_height = screen_limits[1]
 
         # Added the image to the Player
-        image = pygame.image.load('assets/playerShip1_blue.png')
-        image = pygame.transform.scale(
+        image = load('assets/images/playerShip1_blue.png')
+        image = scale(
             image,
             (
                 int(image.get_rect().width * .5),
                 int(image.get_rect().height * .5)
             )
         )
-        image = pygame.transform.rotate(image, -90)
-        self.surf = image.convert()
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        image = rotate(image, -90)
+        self.image = image.convert()
+        self.image.set_colorkey((0, 0, 0), RLEACCEL)
 
         # Set the player rect
-        self.rect = self.surf.get_rect()
+        self.rect = self.image.get_rect()
 
-    def update(self, pressed_keys):
+    def add_event(self, event):
+        self.events.append(event)
+
+    def update(self):
+        pressed_keys = get_pressed()
         if pressed_keys[K_UP]:
             self.rect.move_ip(0, -5)
         if pressed_keys[K_DOWN]:
