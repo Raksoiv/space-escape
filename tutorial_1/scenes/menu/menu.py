@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN, QUIT
 
-from conf import colors, settings
+from utils import colors
 from objects import TextObject
 
 from .cursor import Cursor

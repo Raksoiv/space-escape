@@ -1,7 +1,7 @@
 from pygame.font import Font
 from pygame.sprite import Sprite
 
-from conf import colors
+from utils import colors
 
 
 class TextObject(Sprite):
