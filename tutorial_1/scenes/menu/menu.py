@@ -107,6 +107,8 @@ class Menu:
         )
 
     def main_loop(self):
+        exit = None
+        self.start()
         while self.running:
             # Event catch
             for event in pygame.event.get():
@@ -126,3 +128,5 @@ class Menu:
 
             # Ensure frame rate
             self.clock.tick(60)
+
+        return exit
