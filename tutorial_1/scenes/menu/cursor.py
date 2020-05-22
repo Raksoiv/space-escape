@@ -14,6 +14,9 @@ class Cursor(Sprite):
         self.events = []
         self.selected = None
 
+    def start(self):
+        self.selected = None
+
     def add_position(self, x, y):
         self.positions.append((x, y))
 

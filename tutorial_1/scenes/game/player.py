@@ -28,7 +28,7 @@ class Player(Sprite):
         self.image = image.convert()
         self.image.set_colorkey((0, 0, 0), RLEACCEL)
 
-        # Set the player rect
+    def start(self):
         self.rect = self.image.get_rect()
 
     def add_event(self, event):

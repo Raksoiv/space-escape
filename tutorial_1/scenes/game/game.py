@@ -1,6 +1,6 @@
 from pygame import QUIT, USEREVENT, display, event
 from pygame.display import Info
-from pygame.sprite import Group, LayeredUpdates
+from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
 
 from utils import colors
@@ -23,6 +23,7 @@ class Game:
         self.render_sprites = LayeredUpdates()
         self.update_sprites = Group()
         self.event_sprites = Group()
+        self.enemies = Group()
 
         # GameObject creation
         self.player = Player(screen_limits=(self.screen_w, self.screen_h))
@@ -36,18 +37,27 @@ class Game:
             font_size=36,
         )
 
-        # Assign groups
-        self.render_sprites.add(self.player)
-        self.update_sprites.add(self.player)
-
     def add_enemy(self):
         enemy = Enemy(screen_limits=(self.screen_w, self.screen_h))
         self.render_sprites.add(enemy)
         self.update_sprites.add(enemy)
+        self.enemies.add(enemy)
 
     def start(self):
+        self.player.start()
+        self.score.start()
         self.add_enemy_event = USEREVENT + 1
         set_timer(self.add_enemy_event, 300)
+
+        self.render_sprites.add(self.player)
+        self.update_sprites.add(self.player)
+
+    def clean(self):
+        set_timer(self.add_enemy_event, 0)
+        self.render_sprites.empty()
+        self.update_sprites.empty()
+        self.event_sprites.empty()
+        self.enemies.empty()
 
     def main_loop(self):
         self.start()
@@ -64,6 +74,12 @@ class Game:
             # Update fase
             self.update_sprites.update()
 
+            # Collision fase
+            if spritecollideany(self.player, self.enemies):
+                self.player.kill()
+                self.clean()
+                return 1
+
             # Render fase
             self.screen.fill((0, 0, 0))
             self.render_sprites.draw(self.screen)
@@ -73,4 +89,4 @@ class Game:
             # Ensure frame rate
             self.clock.tick(60)
 
-        return 1
+        return 0

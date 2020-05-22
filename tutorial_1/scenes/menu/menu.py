@@ -71,7 +71,6 @@ class Menu:
             self.cursor,
         )
 
-    def start(self):
         # Start positions of the objects
         self.title_text.rect.move_ip(
             (self.screen_w - self.title_text.rect.width) / 2,
@@ -105,6 +104,10 @@ class Menu:
             self.score_text.rect.left - self.cursor.rect.width - 10,
             self.exit_text.rect.centery - int(self.cursor.rect.height / 2),
         )
+
+    def start(self):
+        # Start cursor data
+        self.cursor.start()
 
     def main_loop(self):
         self.start()
