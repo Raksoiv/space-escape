@@ -107,7 +107,6 @@ class Menu:
         )
 
     def main_loop(self):
-        exit = None
         self.start()
         while self.running:
             # Event catch
@@ -126,7 +125,12 @@ class Menu:
 
             pygame.display.flip()
 
+            if self.cursor.selected == 0:
+                return 2
+            elif self.cursor.selected == 2:
+                return 0
+
             # Ensure frame rate
             self.clock.tick(60)
 
-        return exit
+        return 0

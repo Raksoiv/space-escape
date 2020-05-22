@@ -50,7 +50,6 @@ class Game:
         set_timer(self.add_enemy_event, 300)
 
     def main_loop(self):
-        exit = None
         self.start()
         while self.running:
             # Event catch
@@ -74,4 +73,4 @@ class Game:
             # Ensure frame rate
             self.clock.tick(60)
 
-        return exit
+        return 1
