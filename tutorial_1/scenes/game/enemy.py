@@ -1,9 +1,12 @@
 import random
 
-import pygame
+from pygame.sprite import Sprite
+from pygame.image import load
+from pygame.transform import scale
+from pygame import RLEACCEL
 
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(Sprite):
     def __init__(self, screen_limits):
         # Super init
         super().__init__()
@@ -13,7 +16,7 @@ class Enemy(pygame.sprite.Sprite):
         self.screen_height = screen_limits[1]
 
         images = [
-            pygame.image.load(image)
+            load(image)
             for image in [
                 'assets/images/meteorBrown_small1.png',
                 'assets/images/meteorBrown_small2.png',
@@ -22,7 +25,7 @@ class Enemy(pygame.sprite.Sprite):
             ]
         ]
         images = [
-            pygame.transform.scale(
+            scale(
                 image,
                 (
                     image.get_rect().width,
@@ -32,6 +35,7 @@ class Enemy(pygame.sprite.Sprite):
         ]
 
         self.image = images[random.randint(0, 3)].convert()
+        self.image.set_colorkey((0, 0, 0), RLEACCEL)
 
         # Set the enemy starting point
         self.rect = self.image.get_rect(center=(

@@ -1,4 +1,4 @@
-import pygame.image
+from pygame.image import load
 from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN
 from pygame.sprite import Sprite
 
@@ -7,7 +7,7 @@ class Cursor(Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load('assets/images/playerLife1_blue.png')
+        self.image = load('assets/images/playerLife1_blue.png')
         self.rect = self.image.get_rect()
         self.actual_position = 0
         self.positions = []

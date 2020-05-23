@@ -1,26 +1,27 @@
-import pygame
-from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN, QUIT
+from pygame import QUIT, display, event
+from pygame.sprite import Group, LayeredUpdates
+from pygame.time import Clock
 
-from utils import colors
 from objects import TextObject
+from utils import colors
 
-from .cursor import Cursor
 from .background import Background
+from .cursor import Cursor
 
 
 class Menu:
     def __init__(self, screen):
         # Base configuration
         self.screen = screen
-        info = pygame.display.Info()
+        info = display.Info()
         self.screen_h, self.screen_w = info.current_h, info.current_w
         self.running = True
-        self.clock = pygame.time.Clock()
+        self.clock = Clock()
 
         # Groups creation
-        self.render_sprites = pygame.sprite.LayeredUpdates()
-        self.update_sprites = pygame.sprite.Group()
-        self.event_sprites = pygame.sprite.Group()
+        self.render_sprites = LayeredUpdates()
+        self.update_sprites = Group()
+        self.event_sprites = Group()
 
         # GameObject creation
         font_file = 'assets/fonts/BalooChettan2-SemiBold.ttf'
@@ -113,10 +114,10 @@ class Menu:
         self.start()
         while self.running:
             # Event catch
-            for event in pygame.event.get():
+            for e in event.get():
                 for s in self.event_sprites.sprites():
-                    s.add_event(event)
-                if event.type == QUIT:
+                    s.add_event(e)
+                if e.type == QUIT:
                     self.running = False
 
             # Update fase
@@ -126,7 +127,7 @@ class Menu:
             self.screen.fill((0, 0, 0))
             self.render_sprites.draw(self.screen)
 
-            pygame.display.flip()
+            display.flip()
 
             if self.cursor.selected == 0:
                 return 2

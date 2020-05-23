@@ -8,6 +8,7 @@ from utils import colors
 from .enemy import Enemy
 from .player import Player
 from .score import Score
+from .background import Background
 
 
 class Game:
@@ -27,6 +28,7 @@ class Game:
 
         # GameObject creation
         self.player = Player(screen_limits=(self.screen_w, self.screen_h))
+        self.background = Background()
 
         font_file = 'assets/fonts/BalooChettan2-SemiBold.ttf'
         self.score = Score(
@@ -49,8 +51,11 @@ class Game:
         self.add_enemy_event = USEREVENT + 1
         set_timer(self.add_enemy_event, 300)
 
+        self.render_sprites.add(self.background)
         self.render_sprites.add(self.player)
         self.update_sprites.add(self.player)
+        self.render_sprites.add(self.score)
+        self.update_sprites.add(self.score)
 
     def clean(self):
         set_timer(self.add_enemy_event, 0)

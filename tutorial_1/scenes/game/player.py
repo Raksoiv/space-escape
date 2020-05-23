@@ -1,8 +1,6 @@
-import pygame
 from pygame.image import load
 from pygame.key import get_pressed
-from pygame.locals import (K_DOWN, K_LEFT, K_RIGHT, K_UP, KEYDOWN, KEYUP,
-                           RLEACCEL)
+from pygame.locals import K_DOWN, K_LEFT, K_RIGHT, K_UP, RLEACCEL
 from pygame.sprite import Sprite
 from pygame.transform import rotate, scale
 

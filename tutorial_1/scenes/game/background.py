@@ -10,7 +10,7 @@ class Background(Sprite):
 
         info = Info()
         self.image = Surface((info.current_w, info.current_h))
-        raw_image = load('assets/images/purple.png').convert()
+        raw_image = load('assets/images/blue.png').convert()
         for j in range(3):
             for i in range(4):
                 self.image.blit(raw_image, (
