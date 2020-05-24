@@ -27,8 +27,9 @@ setuptools.setup(
     ],
     entry_points={
         "console_scripts": [
-            "space-escape = space_escape.main",
+            "space-escape = space_escape.main:main",
         ],
     },
     python_requires='>=3.7',
+    include_package_data=True,
 )
