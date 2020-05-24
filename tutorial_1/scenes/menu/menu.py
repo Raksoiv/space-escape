@@ -2,11 +2,10 @@ from pygame import QUIT, display, event
 from pygame.sprite import Group, LayeredUpdates
 from pygame.time import Clock
 
-from objects import TextObject
+from objects import Cursor, TextObject
 from utils import colors
 
 from .background import Background
-from .cursor import Cursor
 
 
 class Menu:
@@ -92,17 +91,17 @@ class Menu:
 
         # Cursor positions
         self.cursor.add_position(
-            self.score_text.rect.left - self.cursor.rect.width - 10,
+            self.score_text.rect.left - self.cursor.rect.width,
             self.start_text.rect.centery - int(self.cursor.rect.height / 2),
         )
 
         self.cursor.add_position(
-            self.score_text.rect.left - self.cursor.rect.width - 10,
+            self.score_text.rect.left - self.cursor.rect.width,
             self.score_text.rect.centery - int(self.cursor.rect.height / 2),
         )
 
         self.cursor.add_position(
-            self.score_text.rect.left - self.cursor.rect.width - 10,
+            self.score_text.rect.left - self.cursor.rect.width,
             self.exit_text.rect.centery - int(self.cursor.rect.height / 2),
         )
 

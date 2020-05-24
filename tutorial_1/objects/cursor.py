@@ -4,7 +4,7 @@ from pygame.sprite import Sprite
 
 
 class Cursor(Sprite):
-    def __init__(self):
+    def __init__(self, margin=10):
         super().__init__()
 
         self.image = load('assets/images/playerLife1_blue.png')
@@ -13,12 +13,14 @@ class Cursor(Sprite):
         self.positions = []
         self.events = []
         self.selected = None
+        self.margin = margin
 
     def start(self):
         self.selected = None
+        self.actual_position = 0
 
     def add_position(self, x, y):
-        self.positions.append((x, y))
+        self.positions.append((x - self.margin, y))
 
     def add_event(self, event):
         self.events.append(event)

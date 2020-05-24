@@ -3,12 +3,14 @@ from pygame.display import Info
 from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
 
+from objects import Cursor
 from utils import colors
 
+from .background import Background
 from .enemy import Enemy
+from .game_over import GameOver
 from .player import Player
 from .score import Score
-from .background import Background
 
 
 class Game:
@@ -29,6 +31,7 @@ class Game:
         # GameObject creation
         self.player = Player(screen_limits=(self.screen_w, self.screen_h))
         self.background = Background()
+        self.cursor = Cursor()
 
         font_file = 'assets/fonts/BalooChettan2-SemiBold.ttf'
         self.score = Score(
@@ -39,6 +42,8 @@ class Game:
             font_size=36,
         )
 
+        self.game_over = GameOver(self.score, self.cursor)
+
     def add_enemy(self):
         enemy = Enemy(screen_limits=(self.screen_w, self.screen_h))
         self.render_sprites.add(enemy)
@@ -48,6 +53,8 @@ class Game:
     def start(self):
         self.player.start()
         self.score.start()
+        self.score.rect = self.score.image.get_rect()
+        self.cursor.start()
         self.add_enemy_event = USEREVENT + 1
         set_timer(self.add_enemy_event, 300)
 
@@ -57,12 +64,27 @@ class Game:
         self.render_sprites.add(self.score)
         self.update_sprites.add(self.score)
 
+    def restart(self):
+        self.clean()
+        self.start()
+
     def clean(self):
         set_timer(self.add_enemy_event, 0)
+        self.game_over.kill()
+        self.cursor.kill()
         self.render_sprites.empty()
         self.update_sprites.empty()
         self.event_sprites.empty()
         self.enemies.empty()
+
+    def player_death(self):
+        self.player.kill()
+        self.score.game_over()
+        self.score.remove(self.update_sprites)
+        self.render_sprites.add(self.game_over, self.cursor)
+        self.update_sprites.add(self.cursor)
+        self.event_sprites.add(self.cursor)
+        # self.clean()
 
     def main_loop(self):
         self.start()
@@ -79,11 +101,21 @@ class Game:
             # Update fase
             self.update_sprites.update()
 
+            if not self.player.alive():
+                if self.cursor.selected == 0:
+                    self.cursor.selected = None
+                    self.restart()
+                elif self.cursor.selected == 1:
+                    self.cursor.selected = None
+                    self.clean()
+                    return 1
+
             # Collision fase
-            if spritecollideany(self.player, self.enemies):
-                self.player.kill()
-                self.clean()
-                return 1
+            if (
+                self.player.alive() and
+                spritecollideany(self.player, self.enemies)
+            ):
+                self.player_death()
 
             # Render fase
             self.screen.fill((0, 0, 0))
