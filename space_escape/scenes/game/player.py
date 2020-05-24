@@ -4,6 +4,8 @@ from pygame.locals import K_DOWN, K_LEFT, K_RIGHT, K_UP, RLEACCEL
 from pygame.sprite import Sprite
 from pygame.transform import rotate, scale
 
+from space_escape.utils import get_asset_path
+
 
 class Player(Sprite):
     def __init__(self, screen_limits):
@@ -14,7 +16,7 @@ class Player(Sprite):
         self.screen_height = screen_limits[1]
 
         # Added the image to the Player
-        image = load('assets/images/playerShip1_blue.png')
+        image = load(get_asset_path('images/playerShip1_blue.png'))
         image = scale(
             image,
             (

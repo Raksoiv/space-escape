@@ -2,12 +2,14 @@ from pygame.image import load
 from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN
 from pygame.sprite import Sprite
 
+from space_escape.utils import get_asset_path
+
 
 class Cursor(Sprite):
     def __init__(self, margin=10):
         super().__init__()
 
-        self.image = load('assets/images/playerLife1_blue.png')
+        self.image = load(get_asset_path('images/playerLife1_blue.png'))
         self.rect = self.image.get_rect()
         self.actual_position = 0
         self.positions = []

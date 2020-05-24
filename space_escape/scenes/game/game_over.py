@@ -3,7 +3,7 @@ from pygame.sprite import Sprite
 from pygame.surface import Surface
 
 from space_escape.objects import Cursor, TextObject
-from space_escape.utils import colors
+from space_escape.utils import colors, get_asset_path
 
 
 class GameOver(Sprite):
@@ -16,7 +16,7 @@ class GameOver(Sprite):
         self.image = Surface((screen_w, screen_h))
         self.rect = self.image.get_rect()
 
-        font_file = 'assets/fonts/BalooChettan2-SemiBold.ttf'
+        font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')
 
         title = TextObject(
             'GAME OVER',

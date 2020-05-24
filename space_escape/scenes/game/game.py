@@ -4,7 +4,7 @@ from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
 
 from space_escape.objects import Cursor
-from space_escape.utils import colors
+from space_escape.utils import colors, get_asset_path
 
 from .background import Background
 from .enemy import Enemy
@@ -33,7 +33,7 @@ class Game:
         self.background = Background()
         self.cursor = Cursor()
 
-        font_file = 'assets/fonts/BalooChettan2-SemiBold.ttf'
+        font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')
         self.score = Score(
             'Score: 0',
             font_file,

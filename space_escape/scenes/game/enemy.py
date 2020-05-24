@@ -5,6 +5,8 @@ from pygame.image import load
 from pygame.sprite import Sprite
 from pygame.transform import scale
 
+from space_escape.utils import get_asset_path
+
 
 class Enemy(Sprite):
     def __init__(self, screen_limits):
@@ -18,10 +20,10 @@ class Enemy(Sprite):
         images = [
             load(image)
             for image in [
-                'assets/images/meteorBrown_small1.png',
-                'assets/images/meteorBrown_small2.png',
-                'assets/images/meteorBrown_tiny1.png',
-                'assets/images/meteorBrown_tiny2.png',
+                get_asset_path('images/meteorBrown_small1.png'),
+                get_asset_path('images/meteorBrown_small2.png'),
+                get_asset_path('images/meteorBrown_tiny1.png'),
+                get_asset_path('images/meteorBrown_tiny2.png'),
             ]
         ]
         images = [

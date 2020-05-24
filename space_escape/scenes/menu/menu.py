@@ -3,7 +3,7 @@ from pygame.sprite import Group, LayeredUpdates
 from pygame.time import Clock
 
 from space_escape.objects import Cursor, TextObject
-from space_escape.utils import colors
+from space_escape.utils import colors, get_asset_path
 
 from .background import Background
 
@@ -23,7 +23,7 @@ class Menu:
         self.event_sprites = Group()
 
         # GameObject creation
-        font_file = 'assets/fonts/BalooChettan2-SemiBold.ttf'
+        font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')
         self.title_text = TextObject(
             'Space Escape',
             font_file,
