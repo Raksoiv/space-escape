@@ -1,9 +1,9 @@
 import random
 
-from pygame.sprite import Sprite
-from pygame.image import load
-from pygame.transform import scale
 from pygame import RLEACCEL
+from pygame.image import load
+from pygame.sprite import Sprite
+from pygame.transform import scale
 
 
 class Enemy(Sprite):

@@ -1,6 +1,8 @@
 import time
-from objects.text_objects import TextObject
+
 from pygame.display import Info
+
+from space_escape.objects.text_objects import TextObject
 
 
 class Score(TextObject):

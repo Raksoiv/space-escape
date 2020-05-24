@@ -1,8 +1,9 @@
-from utils import colors
-from objects import Cursor, TextObject
+from pygame.display import Info
 from pygame.sprite import Sprite
 from pygame.surface import Surface
-from pygame.display import Info
+
+from space_escape.objects import Cursor, TextObject
+from space_escape.utils import colors
 
 
 class GameOver(Sprite):

@@ -1,5 +1,5 @@
 import pygame
-from scenes import Menu, Game
+from space_escape.scenes import Menu, Game
 
 
 def main(width=800, height=600, fullscreen=False):
@@ -21,12 +21,6 @@ def main(width=800, height=600, fullscreen=False):
             r = game.main_loop()
         else:
             running = False
-
-    # game = Game(screen)
-    # game.main_loop()
-
-    # menu = Menu(screen)
-    # menu.main_loop()
 
 
 if __name__ == '__main__':

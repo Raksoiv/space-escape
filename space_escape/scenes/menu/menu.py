@@ -2,8 +2,8 @@ from pygame import QUIT, display, event
 from pygame.sprite import Group, LayeredUpdates
 from pygame.time import Clock
 
-from objects import Cursor, TextObject
-from utils import colors
+from space_escape.objects import Cursor, TextObject
+from space_escape.utils import colors
 
 from .background import Background
 

@@ -3,8 +3,8 @@ from pygame.display import Info
 from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
 
-from objects import Cursor
-from utils import colors
+from space_escape.objects import Cursor
+from space_escape.utils import colors
 
 from .background import Background
 from .enemy import Enemy
