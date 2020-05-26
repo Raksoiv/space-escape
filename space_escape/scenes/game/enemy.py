@@ -95,12 +95,10 @@ class Enemy(Sprite):
             self.speed = v_small
         elif p < p_med:
             raw_image = random.choice(med_meteors)
-            factor = int(score * 0.018)
-            self.speed = random.randint(1, 1 + factor)
+            self.speed = v_med
         elif p < p_big:
             raw_image = random.choice(big_meteors)
-            factor = int(score * 0.0018)
-            self.speed = random.randint(1, 1 + factor)
+            self.speed = v_big
 
         self.image = load(raw_image).convert()
         self.image.set_colorkey((0, 0, 0), RLEACCEL)
