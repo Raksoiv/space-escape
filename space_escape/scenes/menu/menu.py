@@ -3,7 +3,8 @@ from pygame.sprite import Group, LayeredUpdates
 from pygame.time import Clock
 
 from space_escape.objects import Cursor, TextObject
-from space_escape.utils import colors, get_asset_path
+from space_escape.utils import colors
+from space_escape.utils.path import get_asset_path
 
 from .background import Background
 

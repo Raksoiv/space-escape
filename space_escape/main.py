@@ -2,7 +2,7 @@ import pygame
 from space_escape.scenes import Menu, Game
 
 
-def main(width=800, height=600, fullscreen=False):
+def main(width=1024, height=768, fullscreen=False):
     pygame.init()
     if fullscreen:
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)

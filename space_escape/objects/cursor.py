@@ -2,7 +2,7 @@ from pygame.image import load
 from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN
 from pygame.sprite import Sprite
 
-from space_escape.utils import get_asset_path
+from space_escape.utils.path import get_asset_path
 
 
 class Cursor(Sprite):

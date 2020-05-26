@@ -1,10 +1,11 @@
-from pygame import QUIT, USEREVENT, display, event
+from pygame import QUIT, display, event
 from pygame.display import Info
 from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
 
 from space_escape.objects import Cursor
-from space_escape.utils import colors, get_asset_path
+from space_escape.utils import colors, events
+from space_escape.utils.path import get_asset_path
 
 from .background import Background
 from .enemy import Enemy
@@ -21,6 +22,8 @@ class Game:
         self.screen_h, self.screen_w = info.current_h, info.current_w
         self.running = True
         self.clock = Clock()
+
+        self.phase = 0
 
         # Groups creation
         self.render_sprites = LayeredUpdates()
@@ -45,18 +48,18 @@ class Game:
         self.game_over = GameOver(self.score, self.cursor)
 
     def add_enemy(self):
-        enemy = Enemy(screen_limits=(self.screen_w, self.screen_h))
-        self.render_sprites.add(enemy)
-        self.update_sprites.add(enemy)
-        self.enemies.add(enemy)
+        enemy = Enemy((self.screen_w, self.screen_h), self.score.get_score())
+        if enemy.image:
+            self.render_sprites.add(enemy)
+            self.update_sprites.add(enemy)
+            self.enemies.add(enemy)
 
     def start(self):
         self.player.start()
         self.score.start()
         self.score.rect = self.score.image.get_rect()
         self.cursor.start()
-        self.add_enemy_event = USEREVENT + 1
-        set_timer(self.add_enemy_event, 300)
+        self.phase = 0
 
         self.render_sprites.add(self.background)
         self.render_sprites.add(self.player)
@@ -69,7 +72,7 @@ class Game:
         self.start()
 
     def clean(self):
-        set_timer(self.add_enemy_event, 0)
+        set_timer(events.ADD_ENEMY, 0)
         self.game_over.kill()
         self.cursor.kill()
         self.render_sprites.empty()
@@ -95,10 +98,56 @@ class Game:
                     s.add_event(e)
                 if e.type == QUIT:
                     self.running = False
-                elif e.type == self.add_enemy_event:
+                elif e.type == events.ADD_ENEMY:
                     self.add_enemy()
 
             # Update fase
+            if self.score.get_score() < 40:
+                if self.phase < 1:
+                    self.phase = 1
+                    set_timer(events.ADD_ENEMY, 300)
+                    print(self.phase)
+            elif self.score.get_score() < 60:
+                if self.phase < 2:
+                    self.phase = 2
+                    set_timer(events.ADD_ENEMY, 200)
+                    print(self.phase)
+            elif self.score.get_score() < 100:
+                if self.phase < 3:
+                    self.phase = 3
+                    set_timer(events.ADD_ENEMY, 250)
+                    print(self.phase)
+            elif self.score.get_score() < 120:
+                if self.phase < 4:
+                    self.phase = 4
+                    set_timer(events.ADD_ENEMY, 150)
+                    print(self.phase)
+            elif self.score.get_score() < 160:
+                if self.phase < 5:
+                    self.phase = 5
+                    set_timer(events.ADD_ENEMY, 200)
+                    print(self.phase)
+            elif self.score.get_score() < 180:
+                if self.phase < 6:
+                    self.phase = 6
+                    set_timer(events.ADD_ENEMY, 100)
+                    print(self.phase)
+            elif self.score.get_score() < 220:
+                if self.phase < 7:
+                    self.phase = 7
+                    set_timer(events.ADD_ENEMY, 150)
+                    print(self.phase)
+            elif self.score.get_score() < 240:
+                if self.phase < 8:
+                    self.phase = 8
+                    set_timer(events.ADD_ENEMY, 50)
+                    print(self.phase)
+            else:
+                if self.phase < 9:
+                    self.phase = 9
+                    set_timer(events.ADD_ENEMY, 100)
+                    print(self.phase)
+
             self.update_sprites.update()
 
             if not self.player.alive():

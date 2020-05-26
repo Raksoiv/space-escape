@@ -8,14 +8,15 @@ from space_escape.objects.text_objects import TextObject
 class Score(TextObject):
     def start(self):
         self.start_time = time.time()
+        self.score = 0
 
     def get_score(self):
-        return int(time.time() - self.start_time)
+        return self.score
 
     def update(self):
-        score = int(time.time() - self.start_time)
+        self.score = int(time.time() - self.start_time)
         self.image = self.font.render(
-            f'Score: {score}',
+            f'Score: {self.score}',
             self.antialias,
             self.font_color,
         )
