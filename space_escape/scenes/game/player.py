@@ -11,6 +11,10 @@ class Player(Sprite):
     def __init__(self, screen_limits):
         super().__init__()
 
+        self.speed = [0, 0]
+        self.max_speed = 6
+        self.acceleration = .4
+
         # Set the screen size
         self.screen_width = screen_limits[0]
         self.screen_height = screen_limits[1]
@@ -37,13 +41,42 @@ class Player(Sprite):
     def update(self):
         pressed_keys = get_pressed()
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -5)
+            if self.speed[1] <= -self.max_speed:
+                self.speed[1] = -self.max_speed
+            else:
+                self.speed[1] -= self.acceleration
+        else:
+            if self.speed[1] < 0:
+                self.speed[1] += self.acceleration
+
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 5)
+            if self.speed[1] >= self.max_speed:
+                self.speed[1] = self.max_speed
+            else:
+                self.speed[1] += self.acceleration
+        else:
+            if self.speed[1] > 0:
+                self.speed[1] -= 1
+
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-5, 0)
+            if self.speed[0] <= -self.max_speed:
+                self.speed[0] = -self.max_speed
+            else:
+                self.speed[0] -= self.acceleration
+        else:
+            if self.speed[0] < 0:
+                self.speed[0] += self.acceleration
+
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(5, 0)
+            if self.speed[0] >= self.max_speed:
+                self.speed[0] = self.max_speed
+            else:
+                self.speed[0] += self.acceleration
+        else:
+            if self.speed[0] > 0:
+                self.speed[0] -= self.acceleration
+
+        self.rect.move_ip(self.speed[0], self.speed[1])
 
         # Keep player on the screen
         if self.rect.left < 0:
