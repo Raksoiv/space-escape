@@ -3,11 +3,10 @@ from pygame.display import Info
 from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
 
-from space_escape.objects import Cursor
+from space_escape.objects import Cursor, Background
 from space_escape.utils import colors, events
 from space_escape.utils.path import get_asset_path
 
-from .background import Background
 from .enemy import Enemy
 from .game_over import GameOver
 from .player import Player
@@ -39,7 +38,7 @@ class Game:
 
         # GameObject creation
         self.player = Player(screen_limits=(self.screen_w, self.screen_h))
-        self.background = Background()
+        self.background = Background('images/blue.png')
         self.cursor = Cursor()
 
         font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')

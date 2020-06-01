@@ -2,11 +2,9 @@ from pygame import QUIT, display, event
 from pygame.sprite import Group, LayeredUpdates
 from pygame.time import Clock
 
-from space_escape.objects import Cursor, TextObject
+from space_escape.objects import Cursor, TextObject, Background
 from space_escape.utils import colors
 from space_escape.utils.path import get_asset_path
-
-from .background import Background
 
 
 class Menu:
@@ -53,7 +51,7 @@ class Menu:
             font_color=colors.white,
             font_size=32,
         )
-        self.background = Background()
+        self.background = Background('images/purple.png')
         self.cursor = Cursor()
 
         # Assign groups
