@@ -2,9 +2,15 @@ from os import listdir
 import os.path
 
 
-ASSETS_BASEPATH = os.path.join(os.path.dirname(
-    os.path.dirname(__file__)),
-    'assets'
+BASEPATH = os.path.dirname(os.path.dirname(__file__))
+ASSETS_BASEPATH = os.path.join(
+    BASEPATH,
+    'assets',
+)
+HIGHSCORES_BASEPATH = os.path.join(
+    BASEPATH,
+    'data',
+    'highscores.json'
 )
 
 
