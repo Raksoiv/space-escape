@@ -61,11 +61,15 @@ class Game:
         self.cursor.start()
         self.phase = 0
 
-        self.render_sprites.add(self.background)
-        self.render_sprites.add(self.player)
-        self.update_sprites.add(self.player)
-        self.render_sprites.add(self.score)
-        self.update_sprites.add(self.score)
+        self.render_sprites.add(
+            self.background,
+            self.player,
+            self.score,
+        )
+        self.update_sprites.add(
+            self.player,
+            self.score,
+        )
 
     def restart(self):
         self.clean()
@@ -89,6 +93,44 @@ class Game:
         self.event_sprites.add(self.cursor)
         # self.clean()
 
+    def stage_update(self):
+        if self.score.get_score() < 40:
+            if self.phase < 1:
+                self.phase = 1
+                set_timer(events.ADD_ENEMY, 300)
+        elif self.score.get_score() < 60:
+            if self.phase < 2:
+                self.phase = 2
+                set_timer(events.ADD_ENEMY, 200)
+        elif self.score.get_score() < 100:
+            if self.phase < 3:
+                self.phase = 3
+                set_timer(events.ADD_ENEMY, 250)
+        elif self.score.get_score() < 120:
+            if self.phase < 4:
+                self.phase = 4
+                set_timer(events.ADD_ENEMY, 150)
+        elif self.score.get_score() < 160:
+            if self.phase < 5:
+                self.phase = 5
+                set_timer(events.ADD_ENEMY, 200)
+        elif self.score.get_score() < 180:
+            if self.phase < 6:
+                self.phase = 6
+                set_timer(events.ADD_ENEMY, 100)
+        elif self.score.get_score() < 220:
+            if self.phase < 7:
+                self.phase = 7
+                set_timer(events.ADD_ENEMY, 150)
+        elif self.score.get_score() < 240:
+            if self.phase < 8:
+                self.phase = 8
+                set_timer(events.ADD_ENEMY, 50)
+        else:
+            if self.phase < 9:
+                self.phase = 9
+                set_timer(events.ADD_ENEMY, 100)
+
     def main_loop(self):
         self.start()
         while self.running:
@@ -102,52 +144,7 @@ class Game:
                     self.add_enemy()
 
             # Update fase
-            if self.score.get_score() < 40:
-                if self.phase < 1:
-                    self.phase = 1
-                    set_timer(events.ADD_ENEMY, 300)
-                    print(self.phase)
-            elif self.score.get_score() < 60:
-                if self.phase < 2:
-                    self.phase = 2
-                    set_timer(events.ADD_ENEMY, 200)
-                    print(self.phase)
-            elif self.score.get_score() < 100:
-                if self.phase < 3:
-                    self.phase = 3
-                    set_timer(events.ADD_ENEMY, 250)
-                    print(self.phase)
-            elif self.score.get_score() < 120:
-                if self.phase < 4:
-                    self.phase = 4
-                    set_timer(events.ADD_ENEMY, 150)
-                    print(self.phase)
-            elif self.score.get_score() < 160:
-                if self.phase < 5:
-                    self.phase = 5
-                    set_timer(events.ADD_ENEMY, 200)
-                    print(self.phase)
-            elif self.score.get_score() < 180:
-                if self.phase < 6:
-                    self.phase = 6
-                    set_timer(events.ADD_ENEMY, 100)
-                    print(self.phase)
-            elif self.score.get_score() < 220:
-                if self.phase < 7:
-                    self.phase = 7
-                    set_timer(events.ADD_ENEMY, 150)
-                    print(self.phase)
-            elif self.score.get_score() < 240:
-                if self.phase < 8:
-                    self.phase = 8
-                    set_timer(events.ADD_ENEMY, 50)
-                    print(self.phase)
-            else:
-                if self.phase < 9:
-                    self.phase = 9
-                    set_timer(events.ADD_ENEMY, 100)
-                    print(self.phase)
-
+            self.stage_update()
             self.update_sprites.update()
 
             if not self.player.alive():
