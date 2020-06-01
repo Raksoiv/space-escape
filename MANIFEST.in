@@ -1,1 +1,2 @@
 recursive-include space_escape/assets *
+recursive-include space_escape/data *
