@@ -14,6 +14,12 @@ from .player import Player
 from .score import Score
 
 
+BACKGROUND_LAYER = 0
+ENEMY_LAYER = 1
+PLAYER_LAYER = 2
+UI_LAYER = 3
+
+
 class Game:
     def __init__(self, screen):
         # Base configuration
@@ -50,7 +56,7 @@ class Game:
     def add_enemy(self):
         enemy = Enemy((self.screen_w, self.screen_h), self.score.get_score())
         if enemy.image:
-            self.render_sprites.add(enemy)
+            self.render_sprites.add(enemy, layer=ENEMY_LAYER)
             self.update_sprites.add(enemy)
             self.enemies.add(enemy)
 
@@ -61,11 +67,9 @@ class Game:
         self.cursor.start()
         self.phase = 0
 
-        self.render_sprites.add(
-            self.background,
-            self.player,
-            self.score,
-        )
+        self.render_sprites.add(self.background, layer=BACKGROUND_LAYER)
+        self.render_sprites.add(self.player, layer=PLAYER_LAYER)
+        self.render_sprites.add(self.score, layer=UI_LAYER)
         self.update_sprites.add(
             self.player,
             self.score,
@@ -89,7 +93,7 @@ class Game:
         self.score.game_over()
         self.score.remove(self.update_sprites)
         self.score.save_score()
-        self.render_sprites.add(self.game_over, self.cursor)
+        self.render_sprites.add(self.game_over, self.cursor, layer=UI_LAYER)
         self.update_sprites.add(self.cursor)
         self.event_sprites.add(self.cursor)
 
