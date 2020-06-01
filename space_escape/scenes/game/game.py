@@ -88,10 +88,10 @@ class Game:
         self.player.kill()
         self.score.game_over()
         self.score.remove(self.update_sprites)
+        self.score.save_score()
         self.render_sprites.add(self.game_over, self.cursor)
         self.update_sprites.add(self.cursor)
         self.event_sprites.add(self.cursor)
-        # self.clean()
 
     def stage_update(self):
         if self.score.get_score() < 40:
