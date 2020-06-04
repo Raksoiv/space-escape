@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="space-escape-raksoiv",
-    version="0.2.0",
+    version="0.3.0",
     author="Oscar Rencoret",
     author_email="o.rencoret@gmail.com",
     description="Space Escape is a 2D simple endless horizontal scrolling of a space ship avoiding asteroids made with PyGame",
