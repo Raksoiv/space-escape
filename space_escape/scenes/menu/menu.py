@@ -28,7 +28,7 @@ class Menu:
             font_file,
             antialias=True,
             font_color=colors.white,
-            font_size=62,
+            font_size=64,
         )
         self.start_text = TextObject(
             'Start',
@@ -131,6 +131,8 @@ class Menu:
                 return 2
             elif self.cursor.selected == 2:
                 return 0
+            elif self.cursor.selected == 1:
+                return 3
 
             # Ensure frame rate
             self.clock.tick(60)
