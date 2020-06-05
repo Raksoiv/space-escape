@@ -33,6 +33,33 @@ class HighScore:
             font_color=colors.white,
             font_size=64,
         )
+        self.back = TextObject(
+            'Back',
+            font_file,
+            antialias=True,
+            font_color=colors.white,
+            font_size=32,
+        )
+        self.background = Background('images/purple.png')
+        self.cursor = Cursor()
+
+        self.title_text.rect.move_ip(
+            (self.screen_w - self.title_text.rect.width) / 2,
+            int(self.screen_h * .1)
+        )
+
+        self.back.rect.move_ip(
+            (self.screen_w - self.back.rect.width) / 2,
+            self.screen_h * .75
+        )
+
+        self.cursor.add_position(
+            self.back.rect.left - self.cursor.rect.width,
+            self.back.rect.centery - int(self.cursor.rect.height / 2),
+        )
+
+    def start(self):
+        font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')
         self.scores = []
         self.score_pos = []
         for i, score in enumerate(self.get_scores()):
@@ -54,32 +81,18 @@ class HighScore:
                     font_size=32,
                 )
             )
-        self.back = TextObject(
-            'Back',
-            font_file,
-            antialias=True,
-            font_color=colors.white,
-            font_size=32,
-        )
-        self.background = Background('images/purple.png')
-        self.cursor = Cursor()
 
         # Assign groups
         self.event_sprites.add(self.cursor)
         self.render_sprites.add(
             self.background,
-            self.title_text,
             *self.score_pos,
             *self.scores,
             self.back,
             self.cursor,
+            self.title_text,
         )
         self.update_sprites.add(self.cursor)
-
-        self.title_text.rect.move_ip(
-            (self.screen_w - self.title_text.rect.width) / 2,
-            int(self.screen_h * .1)
-        )
 
         max_width = 0
         separation = 150
@@ -102,18 +115,12 @@ class HighScore:
                 score.rect.top,
             )
 
-        self.back.rect.move_ip(
-            (self.screen_w - self.back.rect.width) / 2,
-            self.screen_h * .75
-        )
-
-        self.cursor.add_position(
-            self.back.rect.left - self.cursor.rect.width,
-            self.back.rect.centery - int(self.cursor.rect.height / 2),
-        )
-
-    def start(self):
         self.cursor.start()
+
+    def clean(self):
+        self.event_sprites.empty()
+        self.render_sprites.empty()
+        self.update_sprites.empty()
 
     def main_loop(self):
         self.start()
@@ -133,6 +140,7 @@ class HighScore:
             self.render_sprites.draw(self.screen)
 
             if self.cursor.selected == 0:
+                self.clean()
                 return 1
 
             flip()
