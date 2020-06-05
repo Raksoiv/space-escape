@@ -124,7 +124,6 @@ class Menu:
         self.running = False
 
     def main_loop(self):
-        result = 0
         self.start()
         while self.running:
             # Event catch

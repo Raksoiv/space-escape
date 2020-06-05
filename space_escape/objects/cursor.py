@@ -1,6 +1,7 @@
 from pygame.image import load
 from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN
 from pygame.sprite import Sprite
+from pygame.mixer import Sound
 
 from space_escape.utils.path import get_asset_path
 
@@ -16,6 +17,10 @@ class Cursor(Sprite):
         self.events = []
         self.selected = None
         self.margin = margin
+
+        self.sound = Sound(
+            get_asset_path('sounds/sfx_zap.ogg')
+        )
 
     def start(self):
         self.selected = None
@@ -41,6 +46,7 @@ class Cursor(Sprite):
                     else:
                         self.actual_position += 1
                 elif event.key == K_RETURN:
+                    self.sound.play()
                     self.selected = self.actual_position
         self.events = []
         self.rect.x = self.positions[self.actual_position][0]

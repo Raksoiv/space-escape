@@ -2,6 +2,7 @@ from pygame import QUIT, display, event
 from pygame.display import Info
 from pygame.sprite import Group, LayeredUpdates, spritecollideany
 from pygame.time import Clock, set_timer
+from pygame.mixer import Sound
 
 from space_escape.objects import Cursor, Background
 from space_escape.utils import colors, events
@@ -29,6 +30,14 @@ class Game:
         self.clock = Clock()
 
         self.phase = 0
+
+        # Sound Config
+        self.sound = Sound(
+            get_asset_path('sounds/bensound-game.ogg')
+        )
+        self.lose_sound = Sound(
+            get_asset_path('sounds/sfx_lose.ogg')
+        )
 
         # Groups creation
         self.render_sprites = LayeredUpdates()
@@ -65,6 +74,8 @@ class Game:
         self.score.rect = self.score.image.get_rect()
         self.cursor.start()
         self.phase = 0
+        self.sound.play(loops=-1)
+        self.sound.set_volume(.2)
 
         self.render_sprites.add(self.background, layer=BACKGROUND_LAYER)
         self.render_sprites.add(self.player, layer=PLAYER_LAYER)
@@ -89,6 +100,8 @@ class Game:
 
     def player_death(self):
         self.player.kill()
+        self.sound.fadeout(100)
+        self.lose_sound.play()
         self.score.game_over()
         self.score.remove(self.update_sprites)
         self.score.save_score()
