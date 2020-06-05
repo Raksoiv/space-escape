@@ -1,6 +1,7 @@
 from pygame import QUIT, display, event
 from pygame.sprite import Group, LayeredUpdates
 from pygame.time import Clock
+from pygame.mixer import Sound
 
 from space_escape.objects import Cursor, TextObject, Background
 from space_escape.utils import colors
@@ -14,7 +15,13 @@ class Menu:
         info = display.Info()
         self.screen_h, self.screen_w = info.current_h, info.current_w
         self.running = True
+        self.return_value = 0
         self.clock = Clock()
+
+        # Sound configuration
+        self.background_sound = Sound(
+            get_asset_path('sounds/bensound-menu.ogg')
+        )
 
         # Groups creation
         self.render_sprites = LayeredUpdates()
@@ -105,10 +112,19 @@ class Menu:
         )
 
     def start(self):
-        # Start cursor data
         self.cursor.start()
+        self.return_value = 0
+        self.running = True
+        self.background_sound.play(loops=-1)
+        self.background_sound.set_volume(.25)
+
+    def exit(self, return_value: int = 0):
+        self.background_sound.fadeout(100)
+        self.return_value = return_value
+        self.running = False
 
     def main_loop(self):
+        result = 0
         self.start()
         while self.running:
             # Event catch
@@ -128,13 +144,13 @@ class Menu:
             display.flip()
 
             if self.cursor.selected == 0:
-                return 2
+                self.exit(2)
             elif self.cursor.selected == 2:
-                return 0
+                self.exit()
             elif self.cursor.selected == 1:
-                return 3
+                self.exit(3)
 
             # Ensure frame rate
             self.clock.tick(60)
 
-        return 0
+        return self.return_value
