@@ -4,7 +4,7 @@ import json
 from pygame.display import Info
 
 from space_escape.objects.text_objects import TextObject
-from space_escape.utils.path import HIGHSCORES_BASEPATH
+from space_escape.core.path import HIGHSCORES_BASEPATH
 
 
 class Score(TextObject):

@@ -3,7 +3,7 @@ from pygame.image import load
 from pygame.sprite import Sprite
 from pygame.surface import Surface
 
-from space_escape.utils.path import get_asset_path
+from space_escape.core.path import get_asset_path
 
 
 class Background(Sprite):

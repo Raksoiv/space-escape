@@ -4,7 +4,7 @@ from pygame.locals import K_DOWN, K_LEFT, K_RIGHT, K_UP, RLEACCEL
 from pygame.sprite import Sprite
 from pygame.transform import rotate, scale
 
-from space_escape.utils.path import get_asset_path
+from space_escape.core.path import get_asset_path
 
 
 class Player(Sprite):

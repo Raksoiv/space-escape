@@ -6,7 +6,7 @@ from pygame.mixer import Sound
 
 from space_escape.objects import Cursor, Background
 from space_escape.utils import colors, events
-from space_escape.utils.path import get_asset_path
+from space_escape.core.path import get_asset_path
 
 from .enemy import Enemy
 from .game_over import GameOver

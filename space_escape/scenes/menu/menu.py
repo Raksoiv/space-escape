@@ -1,155 +1,83 @@
-from pygame import QUIT, display, event
-from pygame.sprite import Group, LayeredUpdates
-from pygame.time import Clock
 from pygame.mixer import Sound
 
-from space_escape.objects import Cursor, TextObject, Background
-from space_escape.utils import colors
-from space_escape.utils.path import get_asset_path
+from space_escape.core.game_objects import Background, Cursor
+from space_escape.core.scene import Scene
+from space_escape.core.path import get_asset_path
+
+from .main_menu import MainMenu
+from .highscore import HighScore
 
 
-class Menu:
-    def __init__(self, screen):
-        # Base configuration
-        self.screen = screen
-        info = display.Info()
-        self.screen_h, self.screen_w = info.current_h, info.current_w
-        self.running = True
-        self.return_value = 0
-        self.clock = Clock()
+class Menu(Scene):
+    def clear(self):
+        self.background_sound.fadeout(100)
+        self.cursor.clear()
+
+    def start(self):
+        # Scene configuration
+        self.selected = 'main_menu'
 
         # Sound configuration
         self.background_sound = Sound(
-            get_asset_path('sounds/bensound-menu.ogg')
+            get_asset_path('sounds', 'bensound-menu.ogg')
         )
-
-        # Groups creation
-        self.render_sprites = LayeredUpdates()
-        self.update_sprites = Group()
-        self.event_sprites = Group()
-
-        # GameObject creation
-        font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')
-        self.title_text = TextObject(
-            'Space Escape',
-            font_file,
-            antialias=True,
-            font_color=colors.white,
-            font_size=64,
-        )
-        self.start_text = TextObject(
-            'Start',
-            font_file,
-            antialias=True,
-            font_color=colors.white,
-            font_size=32,
-        )
-        self.score_text = TextObject(
-            'High Scores',
-            font_file,
-            antialias=True,
-            font_color=colors.white,
-            font_size=32,
-        )
-        self.exit_text = TextObject(
-            'Exit',
-            font_file,
-            antialias=True,
-            font_color=colors.white,
-            font_size=32,
-        )
-        self.background = Background('images/purple.png')
-        self.cursor = Cursor()
-
-        # Assign groups
-        self.render_sprites.add(
-            self.background,
-            self.title_text,
-            self.start_text,
-            self.score_text,
-            self.exit_text,
-            self.cursor,
-        )
-        self.update_sprites.add(
-            self.cursor,
-        )
-        self.event_sprites.add(
-            self.cursor,
-        )
-
-        # Start positions of the objects
-        self.title_text.rect.move_ip(
-            (self.screen_w - self.title_text.rect.width) / 2,
-            int(self.screen_h * .2)
-        )
-        self.start_text.rect.move_ip(
-            (self.screen_w - self.start_text.rect.width) / 2,
-            int(self.screen_h * .4)
-        )
-        self.score_text.rect.move_ip(
-            (self.screen_w - self.score_text.rect.width) / 2,
-            int(self.screen_h * .5)
-        )
-        self.exit_text.rect.move_ip(
-            (self.screen_w - self.exit_text.rect.width) / 2,
-            int(self.screen_h * .6)
-        )
-
-        # Cursor positions
-        self.cursor.add_position(
-            self.score_text.rect.left - self.cursor.rect.width,
-            self.start_text.rect.centery - int(self.cursor.rect.height / 2),
-        )
-
-        self.cursor.add_position(
-            self.score_text.rect.left - self.cursor.rect.width,
-            self.score_text.rect.centery - int(self.cursor.rect.height / 2),
-        )
-
-        self.cursor.add_position(
-            self.score_text.rect.left - self.cursor.rect.width,
-            self.exit_text.rect.centery - int(self.cursor.rect.height / 2),
-        )
-
-    def start(self):
-        self.cursor.start()
-        self.return_value = 0
-        self.running = True
         self.background_sound.play(loops=-1)
         self.background_sound.set_volume(.25)
 
-    def exit(self, return_value: int = 0):
-        self.background_sound.fadeout(100)
-        self.return_value = return_value
-        self.running = False
+        # Game object creation
+        self.background = Background('purple.png')
+        self.main_menu = MainMenu()
+        self.highscore = HighScore()
+        self.cursor = Cursor('playerLife1_blue.png', 'sfx_zap.ogg')
 
-    def main_loop(self):
-        self.start()
-        while self.running:
-            # Event catch
-            for e in event.get():
-                for s in self.event_sprites.sprites():
-                    s.add_event(e)
-                if e.type == QUIT:
-                    self.running = False
+        # Game object start
+        self.background.start()
+        self.main_menu.start()
+        self.cursor.start()
+        self.highscore.start()
 
-            # Update fase
-            self.update_sprites.update()
+        # Add cursor positions
+        self.main_menu.set_cursor_positions(self.cursor)
 
-            # Render fase
-            self.screen.fill((0, 0, 0))
-            self.render_sprites.draw(self.screen)
+        # Add objects to groups
+        self.render_group.add(
+            self.background,
+            self.main_menu,
+            self.cursor,
+        )
+        self.update_group.add(
+            self.cursor,
+        )
+        self.event_group.add(
+            self.cursor,
+        )
 
-            display.flip()
-
-            if self.cursor.selected == 0:
-                self.exit(2)
-            elif self.cursor.selected == 2:
-                self.exit()
-            elif self.cursor.selected == 1:
-                self.exit(3)
-
-            # Ensure frame rate
-            self.clock.tick(60)
-
-        return self.return_value
+    def update(self):
+        if self.cursor.selected is not None:
+            if self.selected == 'main_menu':
+                if self.cursor.selected == 0:
+                    self.exit(2)
+                elif self.cursor.selected == 1:
+                    self.highscore.update_scores()
+                    self.cursor.clear()
+                    self.highscore.set_cursor_positions(self.cursor)
+                    self.render_group.empty()
+                    self.render_group.add(
+                        self.background,
+                        self.highscore,
+                        self.cursor,
+                    )
+                    self.selected = 'highscore'
+                elif self.cursor.selected == 2:
+                    self.exit(0)
+            elif self.selected == 'highscore':
+                if self.cursor.selected == 0:
+                    self.cursor.clear()
+                    self.main_menu.set_cursor_positions(self.cursor)
+                    self.render_group.empty()
+                    self.render_group.add(
+                        self.background,
+                        self.main_menu,
+                        self.cursor,
+                    )
+                    self.selected = 'main_menu'

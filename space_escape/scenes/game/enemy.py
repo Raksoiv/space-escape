@@ -5,7 +5,7 @@ from pygame.image import load
 from pygame.sprite import Sprite
 from pygame.transform import scale
 
-from space_escape.utils.path import get_assets_path_folder
+from space_escape.core.path import get_assets_path_folder
 
 
 class Enemy(Sprite):

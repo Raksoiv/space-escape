@@ -3,7 +3,7 @@ from pygame.locals import K_DOWN, K_RETURN, K_UP, KEYDOWN
 from pygame.sprite import Sprite
 from pygame.mixer import Sound
 
-from space_escape.utils.path import get_asset_path
+from space_escape.core.path import get_asset_path
 
 
 class Cursor(Sprite):

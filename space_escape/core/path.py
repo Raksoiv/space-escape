@@ -14,8 +14,8 @@ HIGHSCORES_BASEPATH = os.path.join(
 )
 
 
-def get_asset_path(asset_path):
-    return os.path.join(ASSETS_BASEPATH, asset_path)
+def get_asset_path(*asset_path):
+    return os.path.join(ASSETS_BASEPATH, *asset_path)
 
 
 def get_assets_path_folder(assets_folder):
