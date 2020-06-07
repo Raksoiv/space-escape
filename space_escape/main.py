@@ -1,5 +1,5 @@
 import pygame
-from space_escape.scenes import Menu, Game, HighScore
+from space_escape.scenes import Menu, Game
 
 
 def main(width=1024, height=768, fullscreen=False):
@@ -11,7 +11,6 @@ def main(width=1024, height=768, fullscreen=False):
 
     game = Game(screen)
     menu = Menu(screen)
-    high_score = HighScore(screen)
 
     running = True
     r = 1
@@ -20,8 +19,6 @@ def main(width=1024, height=768, fullscreen=False):
             r = menu.main_loop()
         elif r == 2:
             r = game.main_loop()
-        elif r == 3:
-            r = high_score.main_loop()
         else:
             running = False
 
