@@ -10,7 +10,7 @@ Space Escape is a 2D endless scroll game in which a spaceship will travel across
 
 ## Installation
 
-Space Escape uses Python an easy to learn, powerful programming language. If you don't already have it, you can download it from [python.org](python.org). Python 3.7.7 or greater is required. For Windows users, please refer to [Python for Windows](https://docs.python.org/3/using/windows.html)
+Space Escape uses Python an easy to learn, powerful programming language. If you don't already have it, you can download it from [python.org](python.org). Python 3.7 or greater is required. For Windows users, please refer to [Python for Windows](https://docs.python.org/3/using/windows.html)
 
 The best way to install Space Escape is with the [pip](https://pip.pypa.io/en/stable/) tool (which is what python uses to install packages). Note, this comes with python in recent versions. We use the --user flag to tell it to install into the home directory, rather than globally.
 
