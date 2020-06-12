@@ -1,4 +1,4 @@
-from pygame import K_DOWN, K_RETURN, K_UP, KEYDOWN, RLEACCEL
+from pygame import K_DOWN, K_RETURN, K_UP, KEYDOWN, RLEACCEL, draw
 from pygame.display import Info
 from pygame.font import Font
 from pygame.image import load
@@ -6,10 +6,11 @@ from pygame.mixer import Sound
 from pygame.rect import Rect
 from pygame.sprite import Sprite
 from pygame.surface import Surface
-
+from pygame.transform import rotate, scale
 from space_escape.utils import colors
 
 from .path import get_asset_path
+from .settings import DEBUG
 
 
 class GameObject(Sprite):
@@ -31,7 +32,7 @@ class GameObject(Sprite):
         # Starts the event queue
         self.events = []
 
-    def add_event(self, event):
+    def add_event(self, event) -> None:
         '''
         This method allows the Game Object to store the events captured by
         the scene and can be access throw self.events
@@ -90,6 +91,12 @@ class GameObject(Sprite):
 
 
 class TextObject(GameObject):
+    '''
+    This class describe a Text Game Object
+
+    This class will be take almost the same parameters as the Font class
+    of pygame, it's objective is to create a Game Object that holds a Text
+    '''
     def __init__(
         self,
         text,
@@ -99,6 +106,7 @@ class TextObject(GameObject):
         font_size=16,
     ):
         super().__init__()
+
         self.font_color = font_color
         self.font_size = font_size
         self.antialias = antialias
@@ -109,23 +117,109 @@ class TextObject(GameObject):
         self.image = self.font.render(
             text,
             self.antialias,
-            self.font_color
+            self.font_color,
+        )
+        self.rect = self.image.get_rect()
+
+    def change_text(self, text: str):
+        '''
+        This method allow the change of the text that the object holds
+        '''
+        self.image = self.font.render(
+            text,
+            self.antialias,
+            self.font_color,
         )
         self.rect = self.image.get_rect()
 
 
 class SpriteObject(GameObject):
-    def __init__(self, image_path):
+    '''
+    This class describe a Image Game Object
+
+    This class admits a image_path relative to the assets/image folder
+    as a source for the sprite and two optional parameters that can
+    scale and rotate the image
+    '''
+    def __init__(
+        self,
+        image_path: str,
+        rotation: int = 0,
+        scale_factor: float = 1
+    ):
         super().__init__()
 
-        self.image = load(
+        raw_image = load(
             get_asset_path('images', image_path)
-        ).convert()
+        )
+        raw_image = scale(
+            raw_image,
+            (
+                int(raw_image.get_rect().width * scale_factor),
+                int(raw_image.get_rect().height * scale_factor),
+            ),
+        )
+        raw_image = rotate(
+            raw_image,
+            rotation,
+        )
+        self.image = raw_image.convert()
         self.image.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.image.get_rect()
 
 
+class SpriteCollideObject(SpriteObject):
+    '''
+    This class describes a Sprite Object with a custom box collider
+
+    This class is usefull when you want a object with a collider different
+    that the default rect of the image.
+
+    This is usefull to adjust the collider to a
+    image with transparent background
+    '''
+    def start_box_collider(self):
+        '''
+        This method will set the initial configuration of the collider
+
+        Needs a box_collider_scale to scale the original rect
+        '''
+        assert hasattr(self, 'box_collider_scale'), \
+            'SpriteCollideObject needs a box_collider_scale'
+        width = int(self.rect.width * self.box_collider_scale)
+        height = int(self.rect.height * self.box_collider_scale)
+        self.box_collider = Rect(0, 0, width, height)
+        self.box_collider.center = self.rect.center
+
+    def update_box_collider(self):
+        '''
+        This method will update the location of the collider based on the
+        current location of the default rect, to maintain consistency
+
+        This method will listen to DEBUG env variable to show on the screen
+        the actual collider boundaries
+        '''
+        self.box_collider.center = self.rect.center
+        if DEBUG:
+            draw.rect(
+                self.image,
+                (0, 255, 0),
+                (
+                    self.box_collider.x - self.rect.x,
+                    self.box_collider.y - self.rect.y,
+                    self.box_collider.width,
+                    self.box_collider.height,
+                ),
+                2
+            )
+
+
 class Background(SpriteObject):
+    '''
+    This class describe a SpriteObject with a custom constructor to
+    build a background. It will take a bg_image and replicate throw
+    x and y to fill the width and height of the scene
+    '''
     def __init__(self, bg_image):
         super().__init__(bg_image)
 
@@ -141,6 +235,15 @@ class Background(SpriteObject):
 
 
 class Cursor(SpriteObject):
+    '''
+    This class describe a SpriteObject with custom methods to build
+    and control a cursor, handful for the ui elements
+
+    It will take a image_path as a image located on assets/image,
+    a sfx_path as a sound for selected feedback located on assets/sounds
+    and an optional margin to set the margin between the position and
+    the cursor
+    '''
     def __init__(
         self,
         image_path: str,
@@ -160,12 +263,17 @@ class Cursor(SpriteObject):
             )
 
     def add_position(self, x, y):
+        '''
+        This method add a position (x, y) for the cursor to move
+        base on player input
+        '''
         self.positions.append((x - self.margin, y))
 
-    def add_event(self, event):
-        self.events.append(event)
-
     def clear(self):
+        '''
+        This method resets the cursor information, useful when recycling
+        the cursor for more than one ui layout
+        '''
         self.selected = None
         self.actual_position = 0
         self.positions = []

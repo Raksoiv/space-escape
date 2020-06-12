@@ -87,11 +87,14 @@ class Scene:
         # Main loop of the scene
         while self.running:
             # Event catch
+            # Set the event queue of the objet itself
+            self.events = []
             for e in event.get():
+                self.events.append(e)
                 for s in self.event_group.sprites():
                     s.add_event(e)
                 if e.type == QUIT:
-                    self.running = False
+                    self.exit(-1)
 
             # Group update
             self.update_group.update()
