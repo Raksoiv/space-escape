@@ -1,18 +1,17 @@
-from pygame import QUIT, display, event
-from pygame.display import Info
-from pygame.sprite import Group, LayeredUpdates, spritecollideany
-from pygame.time import Clock, set_timer
-from pygame.mixer import Sound
+import random
 
-from space_escape.objects import Cursor, Background
-from space_escape.utils import colors, events
+from pygame.mixer import Sound
+from pygame.sprite import Group, spritecollideany
+from pygame.time import set_timer
+from space_escape.core.colliders import box_collide
+from space_escape.core.game_objects import Background, Cursor
 from space_escape.core.path import get_asset_path
+from space_escape.core.scene import Scene
+from space_escape.utils import events
 
 from .enemy import Enemy
-from .game_over import GameOver
+from .game_ui import GameUI
 from .player import Player
-from .score import Score
-
 
 BACKGROUND_LAYER = 0
 ENEMY_LAYER = 1
@@ -20,125 +19,83 @@ PLAYER_LAYER = 2
 UI_LAYER = 3
 
 
-class Game:
-    def __init__(self, screen):
-        # Base configuration
-        self.screen = screen
-        info = Info()
-        self.screen_h, self.screen_w = info.current_h, info.current_w
-        self.running = True
-        self.clock = Clock()
+class Game(Scene):
+    '''
+    This class represents the main game scene where the player will
+    face multiples asteroids and will attempt to stay alive
+    '''
+    #
+    # Base Sprites
+    #
+    tiny_meteors = (
+        'meteorBrown_tiny1.png',
+        'meteorBrown_tiny2.png',
+        'meteorGrey_tiny1.png',
+        'meteorGrey_tiny2.png',
+    )
+    small_meteors = (
+        'meteorBrown_small1.png',
+        'meteorBrown_small2.png',
+        'meteorGrey_small1.png',
+        'meteorGrey_small2.png',
+    )
+    med_meteors = (
+        'meteorBrown_med1.png',
+        'meteorBrown_med2.png',
+        'meteorGrey_med1.png',
+        'meteorGrey_med2.png',
+    )
+    big_meteors = (
+        'meteorBrown_big1.png',
+        'meteorBrown_big2.png',
+        'meteorBrown_big3.png',
+        'meteorBrown_big4.png',
+        'meteorGrey_big1.png',
+        'meteorGrey_big2.png',
+        'meteorGrey_big3.png',
+        'meteorGrey_big4.png',
+    )
 
-        self.phase = 0
+    #
+    # Difficulty System
+    #
+    phase = 0
 
-        # Sound Config
-        self.sound = Sound(
-            get_asset_path('sounds/bensound-game.ogg')
-        )
-        self.lose_sound = Sound(
-            get_asset_path('sounds/sfx_lose.ogg')
-        )
-
-        # Groups creation
-        self.render_sprites = LayeredUpdates()
-        self.update_sprites = Group()
-        self.event_sprites = Group()
-        self.enemies = Group()
-
-        # GameObject creation
-        self.player = Player(screen_limits=(self.screen_w, self.screen_h))
-        self.background = Background('images/blue.png')
-        self.cursor = Cursor()
-
-        font_file = get_asset_path('fonts/BalooChettan2-SemiBold.ttf')
-        self.score = Score(
-            'Score: 0',
-            font_file,
-            antialias=True,
-            font_color=colors.white,
-            font_size=36,
-        )
-
-        self.game_over = GameOver(self.score, self.cursor)
-
-    def add_enemy(self):
-        enemy = Enemy((self.screen_w, self.screen_h), self.score.get_score())
-        if enemy.image:
-            self.render_sprites.add(enemy, layer=ENEMY_LAYER)
-            self.update_sprites.add(enemy)
-            self.enemies.add(enemy)
-
-    def start(self):
-        self.player.start()
-        self.score.start()
-        self.score.rect = self.score.image.get_rect()
-        self.cursor.start()
-        self.phase = 0
-        self.sound.play(loops=-1)
-        self.sound.set_volume(.2)
-
-        self.render_sprites.add(self.background, layer=BACKGROUND_LAYER)
-        self.render_sprites.add(self.player, layer=PLAYER_LAYER)
-        self.render_sprites.add(self.score, layer=UI_LAYER)
-        self.update_sprites.add(
-            self.player,
-            self.score,
-        )
-
-    def restart(self):
-        self.clean()
-        self.start()
-
-    def clean(self):
-        set_timer(events.ADD_ENEMY, 0)
-        self.game_over.kill()
-        self.cursor.kill()
-        self.render_sprites.empty()
-        self.update_sprites.empty()
-        self.event_sprites.empty()
-        self.enemies.empty()
-
-    def player_death(self):
-        self.player.kill()
-        self.sound.fadeout(100)
-        self.lose_sound.play()
-        self.score.game_over()
-        self.score.remove(self.update_sprites)
-        self.score.save_score()
-        self.render_sprites.add(self.game_over, self.cursor, layer=UI_LAYER)
-        self.update_sprites.add(self.cursor)
-        self.event_sprites.add(self.cursor)
-
-    def stage_update(self):
-        if self.score.get_score() < 40:
+    def update_phase(self):
+        '''
+        This method update the phase of the game base on the score of
+        the player
+        '''
+        score = self.ui.get_score()
+        if score < 40:
             if self.phase < 1:
                 self.phase = 1
                 set_timer(events.ADD_ENEMY, 300)
-        elif self.score.get_score() < 60:
+        elif score < 60:
             if self.phase < 2:
                 self.phase = 2
                 set_timer(events.ADD_ENEMY, 200)
-        elif self.score.get_score() < 100:
+        elif score < 100:
             if self.phase < 3:
                 self.phase = 3
                 set_timer(events.ADD_ENEMY, 250)
-        elif self.score.get_score() < 120:
+        elif score < 120:
             if self.phase < 4:
                 self.phase = 4
                 set_timer(events.ADD_ENEMY, 150)
-        elif self.score.get_score() < 160:
+        elif score < 160:
             if self.phase < 5:
                 self.phase = 5
                 set_timer(events.ADD_ENEMY, 200)
-        elif self.score.get_score() < 180:
+        elif score < 180:
             if self.phase < 6:
                 self.phase = 6
                 set_timer(events.ADD_ENEMY, 100)
-        elif self.score.get_score() < 220:
+        elif score < 220:
             if self.phase < 7:
                 self.phase = 7
                 set_timer(events.ADD_ENEMY, 150)
-        elif self.score.get_score() < 240:
+        elif score < 240:
             if self.phase < 8:
                 self.phase = 8
                 set_timer(events.ADD_ENEMY, 50)
@@ -147,45 +104,197 @@ class Game:
                 self.phase = 9
                 set_timer(events.ADD_ENEMY, 100)
 
-    def main_loop(self):
-        self.start()
-        while self.running:
-            # Event catch
-            for e in event.get():
-                for s in self.event_sprites.sprites():
-                    s.add_event(e)
-                if e.type == QUIT:
-                    self.running = False
-                elif e.type == events.ADD_ENEMY:
-                    self.add_enemy()
+    def select_enemy(self):
+        '''
+        This method set the probabilities of a certain sprite to be choosen
+        as enemy based on the phase of the game, at higher phases unlock
+        more sprites and more velocity
+        '''
+        if self.phase < 3:
+            # p_tiny = 100% - 50%
+            p_tiny = 1 - self.ui.get_score() * .0083
+            v_tiny = random.randint(5, 5 + int(self.ui.get_score() * 0.09))
+            # p_small = 0% - 50%
+            p_small = 1
+            v_small = random.randint(5, 5 + int(self.ui.get_score() * 0.09))
+        elif self.phase < 4:
+            n_score = self.ui.get_score() - 60
+            # p_tiny = 50% - 30%
+            p_tiny = .5 - n_score * .0033
+            v_tiny = random.randint(5, 10 + int(n_score * .09))
+            # p_small = 50% - 60%
+            p_small = 1 - n_score * .0016
+            v_small = random.randint(5, 10 + int(n_score * .09))
+            # p_med = 0% - 10%
+            p_med = 1
+            v_med = random.randint(3, 5 + int(n_score * .09))
+        elif self.phase < 6:
+            n_score = self.ui.get_score() - 120
+            # p_tiny = 30% - 20%
+            p_tiny = .3 - n_score * .0016
+            v_tiny = random.randint(5, 15)
+            # p_small = 60% - 50%
+            p_small = .9 - n_score * .0033
+            v_small = random.randint(5, 15)
+            # p_med = 10% - 20%
+            p_med = 1 - n_score * .0016
+            v_med = random.randint(3, 10)
+            # p_big = 0% - 10%
+            p_big = 1
+            v_big = random.randint(1, 2 + int(n_score * .09))
+        else:
+            # p_tiny = 20%
+            p_tiny = .2
+            v_tiny = random.randint(5, 15)
+            # p_small = 50% - 40%
+            p_small = .6
+            v_small = random.randint(5, 15)
+            # p_med = 20% - 25%
+            p_med = .85
+            v_med = random.randint(3, 10)
+            # p_big = 10% - 15%
+            p_big = 1
+            v_big = random.randint(1, 7)
 
-            # Update fase
-            self.stage_update()
-            self.update_sprites.update()
+        p = random.random()
+        if p < p_tiny:
+            sprite = random.choice(self.tiny_meteors)
+            speed = v_tiny
+        elif p < p_small:
+            sprite = random.choice(self.small_meteors)
+            speed = v_small
+        elif p < p_med:
+            sprite = random.choice(self.med_meteors)
+            speed = v_med
+        elif p < p_big:
+            sprite = random.choice(self.big_meteors)
+            speed = v_big
 
-            if not self.player.alive():
+        return f'meteors/{sprite}', speed
+
+    #
+    # Enemy System
+    #
+    def add_enemy(self):
+        '''
+        This method generates an enemy based on select enemy method of
+        the difficulty system
+        '''
+        sprite, speed = self.select_enemy()
+        enemy = Enemy(sprite)
+        enemy.start(speed)
+        enemy.set_pos(
+            random.randint(
+                self.screen_w + 20,
+                self.screen_w + 100
+            ),
+            random.randint(0, self.screen_h)
+        )
+        enemy.update_box_collider()
+        self.render_group.add(enemy, layer=ENEMY_LAYER)
+        self.update_group.add(enemy)
+        self.enemies.add(enemy)
+
+    #
+    # Player System
+    #
+    def player_collide(self):
+        '''
+        This method handles the case when the player hits an enemy
+        Will trigger the game over ui
+        '''
+        self.player.kill()
+        self.sound.fadeout(100)
+        self.lose_sound.play()
+        self.ui.start_game_over(self.cursor)
+        self.cursor.add(
+            self.event_group,
+            self.update_group,
+            self.render_group,
+        )
+
+    #
+    # Restart System
+    #
+    def restart(self):
+        '''
+        This method handles the restart option of the game over menu
+        will restart all the environment variables and restart the
+        journey
+        '''
+        self.ui.start_score()
+        self.cursor.clear()
+        self.cursor.kill()
+        for e in self.enemies.sprites():
+            e.kill()
+        self.phase = 0
+        self.player.set_pos(0, 0)
+        self.sound.play()
+        self.render_group.add(self.player, layer=PLAYER_LAYER)
+        self.update_group.add(self.player)
+
+    #
+    # CORE
+    #
+    def clear(self):
+        self.enemies.empty()
+        self.phase = 0
+
+    def start(self):
+        # Sound Config
+        self.sound = Sound(
+            get_asset_path('sounds', 'bensound-game.ogg')
+        )
+        self.sound.set_volume(.2)
+        self.sound.play()
+
+        self.lose_sound = Sound(
+            get_asset_path('sounds', 'sfx_lose.ogg')
+        )
+
+        # Game object creation
+        self.background = Background('blue.png')
+        self.player = Player(
+            'playerShip1_blue.png',
+            rotation=-90,
+            scale_factor=.5,
+        )
+        self.ui = GameUI()
+        self.cursor = Cursor('playerLife1_blue.png', 'sfx_zap.ogg')
+
+        # Custom group creation
+        self.enemies = Group()
+
+        # Add objects to groups
+        self.render_group.add(self.background, layer=BACKGROUND_LAYER)
+        self.render_group.add(self.player, layer=PLAYER_LAYER)
+        self.render_group.add(self.ui, layer=UI_LAYER)
+
+        self.update_group.add(
+            self.player,
+            self.ui,
+        )
+
+        # Start objects
+        self.player.start()
+        self.ui.start()
+
+    def update(self):
+        # Event handling
+        for e in self.events:
+            if e.type == events.ADD_ENEMY:
+                self.add_enemy()
+
+        if self.player.alive():
+            # Phase handling
+            self.update_phase()
+
+            # Collision handling
+            if spritecollideany(self.player, self.enemies, box_collide):
+                self.player_collide()
+        else:
+            if self.cursor.selected is not None:
                 if self.cursor.selected == 0:
-                    self.cursor.selected = None
                     self.restart()
                 elif self.cursor.selected == 1:
-                    self.cursor.selected = None
-                    self.clean()
-                    return 1
-
-            # Collision fase
-            if (
-                self.player.alive() and
-                spritecollideany(self.player, self.enemies)
-            ):
-                self.player_death()
-
-            # Render fase
-            self.screen.fill((0, 0, 0))
-            self.render_sprites.draw(self.screen)
-
-            display.flip()
-
-            # Ensure frame rate
-            self.clock.tick(60)
-
-        return 0
+                    self.exit(1)
