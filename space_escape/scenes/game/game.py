@@ -3,6 +3,7 @@ import random
 from pygame.mixer import Sound
 from pygame.sprite import Group, spritecollideany
 from pygame.time import set_timer
+
 from space_escape.core.colliders import box_collide
 from space_escape.core.game_objects import Background, Cursor
 from space_escape.core.path import get_asset_path
@@ -239,6 +240,7 @@ class Game(Scene):
     def clear(self):
         self.enemies.empty()
         self.phase = 0
+        set_timer(events.ADD_ENEMY, 0)
 
     def start(self):
         # Sound Config
