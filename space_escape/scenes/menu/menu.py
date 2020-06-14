@@ -6,6 +6,12 @@ from space_escape.core.path import get_asset_path
 
 from .main_menu import MainMenu
 from .highscore import HighScore
+from .credits import Credits
+
+
+MAINMENU = 'mainmenu'
+HIGHSCORE = 'highscore'
+CREDITS = 'credits'
 
 
 class Menu(Scene):
@@ -15,7 +21,7 @@ class Menu(Scene):
 
     def start(self):
         # Scene configuration
-        self.selected = 'main_menu'
+        self.selected = MAINMENU
 
         # Sound configuration
         self.background_sound = Sound(
@@ -28,6 +34,7 @@ class Menu(Scene):
         self.background = Background('purple.png')
         self.main_menu = MainMenu()
         self.highscore = HighScore()
+        self.credits = Credits()
         self.cursor = Cursor('playerLife1_blue.png', 'sfx_zap.ogg')
 
         # Game object start
@@ -35,6 +42,7 @@ class Menu(Scene):
         self.main_menu.start()
         self.cursor.start()
         self.highscore.start()
+        self.credits.start()
 
         # Add cursor positions
         self.main_menu.set_cursor_positions(self.cursor)
@@ -54,7 +62,7 @@ class Menu(Scene):
 
     def update(self):
         if self.cursor.selected is not None:
-            if self.selected == 'main_menu':
+            if self.selected == MAINMENU:
                 if self.cursor.selected == 0:
                     self.exit(2)
                 elif self.cursor.selected == 1:
@@ -67,10 +75,20 @@ class Menu(Scene):
                         self.highscore,
                         self.cursor,
                     )
-                    self.selected = 'highscore'
+                    self.selected = HIGHSCORE
                 elif self.cursor.selected == 2:
+                    self.cursor.clear()
+                    self.credits.set_cursor_positions(self.cursor)
+                    self.render_group.empty()
+                    self.render_group.add(
+                        self.background,
+                        self.credits,
+                        self.cursor,
+                    )
+                    self.selected = CREDITS
+                elif self.cursor.selected == 3:
                     self.exit(0)
-            elif self.selected == 'highscore':
+            elif self.selected == HIGHSCORE or self.selected == CREDITS:
                 if self.cursor.selected == 0:
                     self.cursor.clear()
                     self.main_menu.set_cursor_positions(self.cursor)
@@ -80,4 +98,4 @@ class Menu(Scene):
                         self.main_menu,
                         self.cursor,
                     )
-                    self.selected = 'main_menu'
+                    self.selected = MAINMENU

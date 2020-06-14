@@ -19,6 +19,11 @@ class MainMenu(GameObject):
 
         cursor.add_position(
             self.score_text.rect.left - cursor.rect.width,
+            self.credits.rect.centery - int(cursor.rect.height / 2),
+        )
+
+        cursor.add_position(
+            self.score_text.rect.left - cursor.rect.width,
             self.exit_text.rect.centery - int(cursor.rect.height / 2),
         )
 
@@ -46,6 +51,13 @@ class MainMenu(GameObject):
             font_color=colors.white,
             font_size=32,
         )
+        self.credits = TextObject(
+            'Credits',
+            font_file,
+            antialias=True,
+            font_color=colors.white,
+            font_size=32,
+        )
         self.exit_text = TextObject(
             'Exit',
             font_file,
@@ -57,7 +69,7 @@ class MainMenu(GameObject):
         # Text position
         self.title_text.set_pos(
             (self.screen_w - self.title_text.rect.width) / 2,
-            int(self.screen_h * .2)
+            int(self.screen_h * .1)
         )
         self.start_text.set_pos(
             (self.screen_w - self.start_text.rect.width) / 2,
@@ -67,9 +79,13 @@ class MainMenu(GameObject):
             (self.screen_w - self.score_text.rect.width) / 2,
             int(self.screen_h * .5)
         )
+        self.credits.set_pos(
+            (self.screen_w - self.credits.rect.width) / 2,
+            int(self.screen_h * .6)
+        )
         self.exit_text.set_pos(
             (self.screen_w - self.exit_text.rect.width) / 2,
-            int(self.screen_h * .6)
+            int(self.screen_h * .7)
         )
 
         # Draw base image
@@ -79,6 +95,7 @@ class MainMenu(GameObject):
             self.title_text.get_draw(),
             self.start_text.get_draw(),
             self.score_text.get_draw(),
+            self.credits.get_draw(),
             self.exit_text.get_draw(),
         ))
 
