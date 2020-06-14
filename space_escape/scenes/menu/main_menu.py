@@ -74,6 +74,7 @@ class MainMenu(GameObject):
 
         # Draw base image
         self.image = Surface((self.screen_w, self.screen_h))
+        self.image.set_colorkey((0, 0, 0))
         self.image.blits((
             self.title_text.get_draw(),
             self.start_text.get_draw(),

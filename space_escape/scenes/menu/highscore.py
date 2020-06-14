@@ -69,6 +69,7 @@ class HighScore(GameObject):
 
         # Draw base image
         self.image = Surface((self.screen_w, self.screen_h))
+        self.image.set_colorkey((0, 0, 0))
         self.image.blits((
             *[s.get_draw() for s in self.score_pos],
             *[s.get_draw() for s in self.scores],

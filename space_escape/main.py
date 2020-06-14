@@ -22,6 +22,8 @@ def main(width=1024, height=768, fullscreen=False):
         else:
             running = False
 
+    pygame.quit()
+
 
 if __name__ == '__main__':
     main(1024, 768)

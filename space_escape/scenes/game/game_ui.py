@@ -175,6 +175,7 @@ class GameUI(GameObject):
 
         # Start image
         self.image = Surface((self.screen_w, self.screen_h))
+        self.image.set_colorkey((0, 0, 0))
 
         # Base rect
         self.rect = self.image.get_rect()
