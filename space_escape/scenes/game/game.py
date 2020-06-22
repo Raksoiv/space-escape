@@ -5,7 +5,7 @@ from pygame.sprite import Group, spritecollideany
 from pygame.time import set_timer
 
 from space_escape.core.colliders import box_collide
-from space_escape.core.game_objects import Background, Cursor
+from space_escape.core.game_objects import Cursor
 from space_escape.core.path import get_asset_path
 from space_escape.core.scene import Scene
 from space_escape.utils import events
@@ -13,6 +13,7 @@ from space_escape.utils import events
 from .enemy import Enemy
 from .game_ui import GameUI
 from .player import Player
+from .background_paralax import BackgroundParalax
 
 BACKGROUND_LAYER = 0
 ENEMY_LAYER = 1
@@ -58,6 +59,13 @@ class Game(Scene):
     )
 
     #
+    # Background functions
+    #
+    def increase_bg_speed(self):
+        self.bg_1.increase_frame_move()
+        self.bg_2.increase_frame_move()
+
+    #
     # Difficulty System
     #
     phase = 0
@@ -75,34 +83,42 @@ class Game(Scene):
         elif score < 60:
             if self.phase < 2:
                 self.phase = 2
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 200)
         elif score < 100:
             if self.phase < 3:
                 self.phase = 3
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 250)
         elif score < 120:
             if self.phase < 4:
                 self.phase = 4
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 150)
         elif score < 160:
             if self.phase < 5:
                 self.phase = 5
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 200)
         elif score < 180:
             if self.phase < 6:
                 self.phase = 6
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 100)
         elif score < 220:
             if self.phase < 7:
                 self.phase = 7
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 150)
         elif score < 240:
             if self.phase < 8:
                 self.phase = 8
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 50)
         else:
             if self.phase < 9:
                 self.phase = 9
+                self.increase_bg_speed()
                 set_timer(events.ADD_ENEMY, 100)
 
     def select_enemy(self):
@@ -223,12 +239,17 @@ class Game(Scene):
         will restart all the environment variables and restart the
         journey
         '''
-        self.ui.start_score()
+        # Delete old stuff
         self.cursor.clear()
         self.cursor.kill()
         for e in self.enemies.sprites():
             e.kill()
+
+        # Set new stuff
+        self.ui.start_score()
         self.phase = 0
+        self.bg_1.reset_frame_move()
+        self.bg_2.reset_frame_move()
         self.player.set_pos(0, 0)
         self.sound.play()
         self.render_group.add(self.player, layer=PLAYER_LAYER)
@@ -255,7 +276,8 @@ class Game(Scene):
         )
 
         # Game object creation
-        self.background = Background('blue.png')
+        self.bg_1 = BackgroundParalax('blue.png', 2)
+        self.bg_2 = BackgroundParalax('blue.png', 2)
         self.player = Player(
             'playerShip1_blue.png',
             rotation=-90,
@@ -268,18 +290,21 @@ class Game(Scene):
         self.enemies = Group()
 
         # Add objects to groups
-        self.render_group.add(self.background, layer=BACKGROUND_LAYER)
+        self.render_group.add(self.bg_1, self.bg_2, layer=BACKGROUND_LAYER)
         self.render_group.add(self.player, layer=PLAYER_LAYER)
         self.render_group.add(self.ui, layer=UI_LAYER)
 
         self.update_group.add(
             self.player,
             self.ui,
+            self.bg_1,
+            self.bg_2,
         )
 
         # Start objects
         self.player.start()
         self.ui.start()
+        self.bg_2.background_pos(2)
 
     def update(self):
         # Event handling
