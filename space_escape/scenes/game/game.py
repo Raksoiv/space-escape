@@ -59,13 +59,6 @@ class Game(Scene):
     )
 
     #
-    # Background functions
-    #
-    def increase_bg_speed(self):
-        self.bg_1.increase_frame_move()
-        self.bg_2.increase_frame_move()
-
-    #
     # Difficulty System
     #
     phase = 0
@@ -83,42 +76,42 @@ class Game(Scene):
         elif score < 60:
             if self.phase < 2:
                 self.phase = 2
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 200)
         elif score < 100:
             if self.phase < 3:
                 self.phase = 3
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 250)
         elif score < 120:
             if self.phase < 4:
                 self.phase = 4
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 150)
         elif score < 160:
             if self.phase < 5:
                 self.phase = 5
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 200)
         elif score < 180:
             if self.phase < 6:
                 self.phase = 6
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 100)
         elif score < 220:
             if self.phase < 7:
                 self.phase = 7
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 150)
         elif score < 240:
             if self.phase < 8:
                 self.phase = 8
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 50)
         else:
             if self.phase < 9:
                 self.phase = 9
-                self.increase_bg_speed()
+                self.bg.increase_frame_move()
                 set_timer(events.ADD_ENEMY, 100)
 
     def select_enemy(self):
@@ -248,8 +241,7 @@ class Game(Scene):
         # Set new stuff
         self.ui.start_score()
         self.phase = 0
-        self.bg_1.reset_frame_move()
-        self.bg_2.reset_frame_move()
+        self.bg.start()
         self.player.set_pos(0, 0)
         self.sound.play()
         self.render_group.add(self.player, layer=PLAYER_LAYER)
@@ -276,8 +268,7 @@ class Game(Scene):
         )
 
         # Game object creation
-        self.bg_1 = BackgroundParalax('blue.png', 2)
-        self.bg_2 = BackgroundParalax('blue.png', 2)
+        self.bg = BackgroundParalax('blue.png')
         self.player = Player(
             'playerShip1_blue.png',
             rotation=-90,
@@ -290,21 +281,20 @@ class Game(Scene):
         self.enemies = Group()
 
         # Add objects to groups
-        self.render_group.add(self.bg_1, self.bg_2, layer=BACKGROUND_LAYER)
+        self.render_group.add(self.bg, layer=BACKGROUND_LAYER)
         self.render_group.add(self.player, layer=PLAYER_LAYER)
         self.render_group.add(self.ui, layer=UI_LAYER)
 
         self.update_group.add(
             self.player,
             self.ui,
-            self.bg_1,
-            self.bg_2,
+            self.bg,
         )
 
         # Start objects
         self.player.start()
         self.ui.start()
-        self.bg_2.background_pos(2)
+        self.bg.start()
 
     def update(self):
         # Event handling
