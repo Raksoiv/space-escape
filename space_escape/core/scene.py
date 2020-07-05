@@ -1,8 +1,10 @@
 from pygame import QUIT, display, event
 from pygame.display import Info
-from pygame.sprite import Group, LayeredUpdates
+from pygame.sprite import Group, LayeredDirty
 from pygame.surface import Surface
 from pygame.time import Clock
+
+from .settings import DEBUG
 
 
 class Scene:
@@ -34,7 +36,7 @@ class Scene:
         # Main Sprite groups
         self.event_group = Group()
         self.update_group = Group()
-        self.render_group = LayeredUpdates()
+        self.render_group = LayeredDirty()
 
     def start(self):
         '''
@@ -103,12 +105,13 @@ class Scene:
             self.update()
 
             # Render group
-            self.screen.fill((0, 0, 0))
             self.render_group.draw(self.screen)
 
             display.flip()
 
             # Ensure frame rate
+            if DEBUG:
+                print(self.clock.get_fps())
             self.clock.tick(60)
 
         return self.return_value

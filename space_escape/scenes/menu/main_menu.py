@@ -5,6 +5,15 @@ from space_escape.utils import colors
 
 
 class MainMenu(GameObject):
+    def get_objects(self) -> tuple:
+        return (
+            self.title_text,
+            self.start_text,
+            self.score_text,
+            self.credits,
+            self.exit_text,
+        )
+
     def set_cursor_positions(self, cursor: Cursor):
         # Cursor positions
         cursor.add_position(
@@ -28,6 +37,8 @@ class MainMenu(GameObject):
         )
 
     def start(self):
+        # Set the game object to render only once on every start
+        self.dirty = 1
         # Text creation
         font_file = 'BalooChettan2-SemiBold.ttf'
         self.title_text = TextObject(
@@ -87,17 +98,3 @@ class MainMenu(GameObject):
             (self.screen_w - self.exit_text.rect.width) / 2,
             int(self.screen_h * .7)
         )
-
-        # Draw base image
-        self.image = Surface((self.screen_w, self.screen_h))
-        self.image.set_colorkey((0, 0, 0))
-        self.image.blits((
-            self.title_text.get_draw(),
-            self.start_text.get_draw(),
-            self.score_text.get_draw(),
-            self.credits.get_draw(),
-            self.exit_text.get_draw(),
-        ))
-
-        # Base rect
-        self.rect = self.image.get_rect()

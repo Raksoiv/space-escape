@@ -147,3 +147,6 @@ class Credits(GameObject):
         ))
 
         self.rect = self.image.get_rect()
+
+        # Update draw
+        self.dirty = 1

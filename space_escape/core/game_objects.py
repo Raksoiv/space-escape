@@ -4,7 +4,7 @@ from pygame.font import Font
 from pygame.image import load
 from pygame.mixer import Sound
 from pygame.rect import Rect
-from pygame.sprite import Sprite
+from pygame.sprite import DirtySprite
 from pygame.surface import Surface
 from pygame.transform import rotate, scale
 from space_escape.utils import colors
@@ -13,7 +13,7 @@ from .path import get_asset_path
 from .settings import DEBUG
 
 
-class GameObject(Sprite):
+class GameObject(DirtySprite):
     '''
     Describe a Game Object in the game
 
@@ -31,6 +31,8 @@ class GameObject(Sprite):
         self.screen_h, self.screen_w = info.current_h, info.current_w
         # Starts the event queue
         self.events = []
+        # Set the default dirty value to 2 => always dirty
+        self.dirty = 2
 
     def add_event(self, event) -> None:
         '''
@@ -233,6 +235,10 @@ class Background(SpriteObject):
                 ))
         self.rect = self.image.get_rect()
 
+        # Background images should only render once
+        # You can override this if your background moves
+        self.dirty = 1
+
 
 class Cursor(SpriteObject):
     '''
@@ -252,9 +258,9 @@ class Cursor(SpriteObject):
     ):
         super().__init__(image_path)
 
-        self.actual_position = 0
-        self.positions = []
-        self.selected = None
+        self.actual_position: int = 0
+        self.positions: list = []
+        self.selected: int = None
         self.margin = margin
 
         if sfx_path:
@@ -268,6 +274,7 @@ class Cursor(SpriteObject):
         base on player input
         '''
         self.positions.append((x - self.margin, y))
+        self.update()
 
     def clear(self):
         '''
@@ -289,16 +296,19 @@ class Cursor(SpriteObject):
         for event in self.events:
             if event.type == KEYDOWN:
                 if event.key == K_UP:
+                    self.dirty = 1
                     if self.actual_position == 0:
                         self.actual_position = len(self.positions) - 1
                     else:
                         self.actual_position -= 1
                 elif event.key == K_DOWN:
+                    self.dirty = 1
                     if self.actual_position == len(self.positions) - 1:
                         self.actual_position = 0
                     else:
                         self.actual_position += 1
                 elif event.key == K_RETURN:
+                    self.dirty = 1
                     self.sound.play()
                     self.selected = self.actual_position
         self.events = []

@@ -3,6 +3,7 @@ from pygame.mixer import Sound
 from space_escape.core.game_objects import Background, Cursor
 from space_escape.core.scene import Scene
 from space_escape.core.path import get_asset_path
+from space_escape.core.settings import DEBUG
 
 from .main_menu import MainMenu
 from .highscore import HighScore
@@ -50,7 +51,7 @@ class Menu(Scene):
         # Add objects to groups
         self.render_group.add(
             self.background,
-            self.main_menu,
+            *self.main_menu.get_objects(),
             self.cursor,
         )
         self.update_group.add(
@@ -95,7 +96,7 @@ class Menu(Scene):
                     self.render_group.empty()
                     self.render_group.add(
                         self.background,
-                        self.main_menu,
+                        *self.main_menu.get_objects(),
                         self.cursor,
                     )
                     self.selected = MAINMENU

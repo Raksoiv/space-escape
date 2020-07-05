@@ -80,6 +80,9 @@ class HighScore(GameObject):
         # Base rect
         self.rect = self.image.get_rect()
 
+        # Update draw
+        self.dirty = 1
+
     def start(self):
         # Text creation
         font_file = 'BalooChettan2-SemiBold.ttf'
