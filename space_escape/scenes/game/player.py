@@ -1,7 +1,8 @@
-from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP
+from pygame import K_DOWN, K_LEFT, K_RIGHT, K_UP, draw
 from pygame.key import get_pressed
+from pygame.math import Vector2
 from pygame.rect import Rect
-from pygame import draw
+
 from space_escape.core.game_objects import SpriteCollideObject
 
 
@@ -9,65 +10,39 @@ class Player(SpriteCollideObject):
     '''
     This class represents the player's ship
     '''
-    speed = [0, 0]
-    max_speed = 8
-    acceleration = 2
-    friction = 3
+    speed = Vector2()
+    max_speed = 500
+    acceleration = 75
+    friction = 150
     box_collider_scale = .75
 
     def start(self):
         self.start_box_collider()
 
-    def update(self):
+    def update(self, delta):
         pressed_keys = get_pressed()
 
-        # Y movement
-        if pressed_keys[K_UP]:
-            self.speed[1] = max(
-                -self.max_speed,
-                self.speed[1] - self.acceleration,
-            )
-        if pressed_keys[K_DOWN]:
-            self.speed[1] = min(
-                self.max_speed,
-                self.speed[1] + self.acceleration,
-            )
-        if not pressed_keys[K_UP] and not pressed_keys[K_DOWN]:
-            if self.speed[1] < 0:
-                self.speed[1] = min(
-                    0,
-                    self.speed[1] + self.friction,
-                )
-            if self.speed[1] > 0:
-                self.speed[1] = max(
-                    0,
-                    self.speed[1] - self.friction,
-                )
+        # Direction
+        direction_vector = Vector2()
+        direction_vector.y = pressed_keys[K_DOWN] - pressed_keys[K_UP]
+        direction_vector.x = pressed_keys[K_RIGHT] - pressed_keys[K_LEFT]
+        if direction_vector.length() != 0:
+            direction_vector.normalize_ip()
 
-        # X movement
-        if pressed_keys[K_LEFT]:
-            self.speed[0] = max(
-                -self.max_speed,
-                self.speed[0] - self.acceleration,
-            )
-        if pressed_keys[K_RIGHT]:
-            self.speed[0] = min(
-                self.max_speed,
-                self.speed[0] + self.acceleration,
-            )
-        if not pressed_keys[K_LEFT] and not pressed_keys[K_RIGHT]:
-            if self.speed[0] < 0:
-                self.speed[0] = min(
-                    0,
-                    self.speed[0] + self.friction,
-                )
-            if self.speed[0] > 0:
-                self.speed[0] = max(
-                    0,
-                    self.speed[0] - self.friction,
-                )
+        # Speed
+        if direction_vector.magnitude() > 0:
+            if self.speed.magnitude() < self.max_speed * delta/1000.0:
+                self.speed += direction_vector * self.acceleration \
+                    * delta/1000.0
+            else:
+                self.speed = direction_vector * self.max_speed * delta/1000.0
+        elif self.speed.magnitude() > 1:
+            self.speed += self.speed.normalize() * -self.friction \
+                * delta/1000.0
+        else:
+            self.speed = self.speed * 0
 
-        # Apply speed
+        # Movement
         self.rect.move_ip(*self.speed)
 
         # Keep player on the screen

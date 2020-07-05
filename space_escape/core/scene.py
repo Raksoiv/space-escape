@@ -99,7 +99,7 @@ class Scene:
                     self.exit(-1)
 
             # Group update
-            self.update_group.update()
+            self.update_group.update(self.clock.get_time())
 
             # Calls the update function for every tick of the game
             self.update()

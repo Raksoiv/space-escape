@@ -30,7 +30,7 @@ class BackgroundParalax(SpriteObject):
         else:
             self.frames_move -= 1
 
-    def update(self):
+    def update(self, delta):
         if self.rect.centerx <= abs(self.velocity[0]):
             self.rect.centerx = self.screen_w
         if self._frames >= self.frames_move:

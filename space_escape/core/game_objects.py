@@ -78,10 +78,13 @@ class GameObject(DirtySprite):
         '''
         pass
 
-    def update(self):
+    def update(self, delta):
         '''
         This function will be called every tick of the game and needs
         to be overrided in every game object to fill the desired behaviour
+
+        The delta atttribute is the time on miliseconds that occurs between
+        frames
 
         The base behaviour to handle events is:
         ```python
@@ -274,7 +277,7 @@ class Cursor(SpriteObject):
         base on player input
         '''
         self.positions.append((x - self.margin, y))
-        self.update()
+        self.update(0)
 
     def clear(self):
         '''
@@ -289,7 +292,7 @@ class Cursor(SpriteObject):
         self.selected = None
         self.actual_position = 0
 
-    def update(self):
+    def update(self, delta):
         assert len(self.positions) > 0, \
             'Cursor not initializated'
 

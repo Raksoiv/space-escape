@@ -16,7 +16,7 @@ class Enemy(SpriteCollideObject):
         self.speed = speed
         self.start_box_collider()
 
-    def update(self):
+    def update(self, delta):
         self.update_box_collider()
 
         self.rect.move_ip(-self.speed, 0)

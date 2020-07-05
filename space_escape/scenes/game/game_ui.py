@@ -187,7 +187,7 @@ class GameUI(GameObject):
         # Start with score
         self.start_score()
 
-    def update(self):
+    def update(self, delta):
         if self.mode == UIModes.SCORE:
             self.update_score()
             self.image.fill(Color(0, 0, 0, 0))
