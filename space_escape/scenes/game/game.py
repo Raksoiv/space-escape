@@ -220,8 +220,8 @@ class Game(Scene):
         self.cursor.add(
             self.event_group,
             self.update_group,
-            self.render_group,
         )
+        self.render_group.add(self.cursor, layer=UI_LAYER)
 
     #
     # Restart System

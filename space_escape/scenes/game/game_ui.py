@@ -37,6 +37,8 @@ class GameUI(GameObject):
         This method update the score of the player based on the amount of time
         that the player stay alive
         '''
+        if self.score != int(time.time() - self.start_time):
+            self.dirty = 1
         self.score = int(time.time() - self.start_time)
         self.score_ui.change_text(f'Score: {self.score}')
 
@@ -72,6 +74,7 @@ class GameUI(GameObject):
         '''
         self.start_time = time.time()
         self.mode = UIModes.SCORE
+        self.dirty = 1
 
     #
     # GAMEOVER
@@ -149,6 +152,7 @@ class GameUI(GameObject):
                 (*self.score_ui.get_draw(),),
             )
         )
+        self.dirty = 1
 
         cursor.add_position(
             self.game_over_restart.rect.left - cursor.rect.width,

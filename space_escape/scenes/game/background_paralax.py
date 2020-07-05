@@ -36,10 +36,11 @@ class BackgroundParalax(SpriteObject):
         if self._frames >= self.frames_move:
             self.rect.move_ip(self.velocity)
             self._frames = 0
+            self.dirty = 1
         else:
             self._frames += 1
 
     def start(self):
         self._frames = 0
-        self.frames_move = 0
+        self.frames_move = 20
         self.velocity = (-1, 0)
