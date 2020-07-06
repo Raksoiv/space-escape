@@ -4,6 +4,7 @@ from space_escape.scenes import Menu, Game
 
 def main(width=800, height=600, fullscreen=False):
     pygame.init()
+    pygame.display.set_caption('Space Escape')
     if fullscreen:
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     else:
