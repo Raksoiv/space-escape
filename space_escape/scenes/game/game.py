@@ -221,7 +221,11 @@ class Game(Scene):
             self.event_group,
             self.update_group,
         )
-        self.render_group.add(self.cursor, layer=UI_LAYER)
+        self.render_group.add(
+            *self.ui.get_objects(),
+            self.cursor,
+            layer=UI_LAYER
+        )
 
     #
     # Restart System
@@ -237,12 +241,12 @@ class Game(Scene):
         self.cursor.kill()
         for e in self.enemies.sprites():
             e.kill()
+        self.render_group.remove(*self.ui.get_objects())
 
         # Set new stuff
         self.ui.start_score()
         self.phase = 0
         self.bg.start()
-        self.player.set_pos(0, 0)
         self.sound.play()
         self.render_group.add(self.player, layer=PLAYER_LAYER)
         self.update_group.add(self.player)
@@ -280,24 +284,24 @@ class Game(Scene):
         self.ui = GameUI()
         self.cursor = Cursor('playerLife1_blue.png', 'sfx_zap.ogg')
 
+        # Start objects
+        self.player.start()
+        self.ui.start()
+        self.bg.start()
+
         # Custom group creation
         self.enemies = Group()
 
         # Add objects to groups
         self.render_group.add(self.bg, layer=BACKGROUND_LAYER)
         self.render_group.add(self.player, layer=PLAYER_LAYER)
-        self.render_group.add(self.ui, layer=UI_LAYER)
+        self.render_group.add(*self.ui.get_objects(), layer=UI_LAYER)
 
         self.update_group.add(
             self.player,
             self.ui,
             self.bg,
         )
-
-        # Start objects
-        self.player.start()
-        self.ui.start()
-        self.bg.start()
 
         # Set the player starting position
         self.player.set_start_position()

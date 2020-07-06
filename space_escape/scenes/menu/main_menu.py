@@ -6,6 +6,11 @@ from space_escape.utils import colors
 
 class MainMenu(GameObject):
     def get_objects(self) -> tuple:
+        self.title_text.dirty = 1
+        self.start_text.dirty = 1
+        self.score_text.dirty = 1
+        self.credits.dirty = 1
+        self.exit_text.dirty = 1
         return (
             self.title_text,
             self.start_text,
@@ -37,8 +42,6 @@ class MainMenu(GameObject):
         )
 
     def start(self):
-        # Set the game object to render only once on every start
-        self.dirty = 1
         # Text creation
         font_file = 'BalooChettan2-SemiBold.ttf'
         self.title_text = TextObject(

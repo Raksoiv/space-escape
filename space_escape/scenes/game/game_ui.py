@@ -38,9 +38,10 @@ class GameUI(GameObject):
         that the player stay alive
         '''
         if self.score != int(time.time() - self.start_time):
-            self.dirty = 1
-        self.score = int(time.time() - self.start_time)
-        self.score_ui.change_text(f'Score: {self.score}')
+            self.score = int(time.time() - self.start_time)
+            # Change text will reset the pos of the game object
+            self.score_ui.change_text(f'Score: {self.score}')
+            self.score_ui.dirty = 1
 
     def save_score(self):
         '''
@@ -73,8 +74,8 @@ class GameUI(GameObject):
         of the game
         '''
         self.start_time = time.time()
+        self.score_ui.dirty = 1
         self.mode = UIModes.SCORE
-        self.dirty = 1
 
     #
     # GAMEOVER
@@ -84,19 +85,16 @@ class GameUI(GameObject):
         This method will create all the elements for the game over object
         creates the surface and asign to self.game_over
         '''
-        self.game_over = Surface((self.screen_w, self.screen_h))
-        self.game_over_rect = self.game_over.get_rect()
-
-        title = TextObject(
+        self.title = TextObject(
             'GAME OVER',
             self.font_file,
             antialias=True,
             font_color=colors.white,
             font_size=62,
         )
-        title.rect.move_ip((
-            self.game_over_rect.centerx - (title.rect.width / 2),
-            self.game_over_rect.height * .2
+        self.title.rect.move_ip((
+            (self.screen_w - self.title.rect.width) / 2,
+            self.screen_h * .2
         ))
 
         self.game_over_restart = TextObject(
@@ -107,10 +105,8 @@ class GameUI(GameObject):
             font_size=36,
         )
         self.game_over_restart.rect.move_ip((
-            self.game_over_rect.centerx - (
-                self.game_over_restart.rect.width / 2
-            ),
-            self.game_over_rect.height * .5
+            (self.screen_w - self.game_over_restart.rect.width) / 2,
+            self.screen_h * .5
         ))
 
         self.game_over_exit_text = TextObject(
@@ -121,17 +117,8 @@ class GameUI(GameObject):
             font_size=36,
         )
         self.game_over_exit_text.rect.move_ip((
-            self.game_over_rect.centerx - (
-                self.game_over_exit_text.rect.width / 2
-            ),
-            self.game_over_rect.height * .6
-        ))
-
-        # Generate the final image
-        self.game_over.blits((
-            title.get_draw(),
-            self.game_over_restart.get_draw(),
-            self.game_over_exit_text.get_draw(),
+            (self.screen_w - self.game_over_exit_text.rect.width) / 2,
+            self.screen_h * .6
         ))
 
     def start_game_over(self, cursor):
@@ -145,14 +132,6 @@ class GameUI(GameObject):
             (self.screen_w / 2) - (self.score_ui.rect.width / 2),
             self.screen_h * .3
         )
-        self.image.fill(Color(0, 0, 0, 0))
-        self.image.blits(
-            (
-                (self.game_over, self.game_over_rect),
-                (*self.score_ui.get_draw(),),
-            )
-        )
-        self.dirty = 1
 
         cursor.add_position(
             self.game_over_restart.rect.left - cursor.rect.width,
@@ -162,6 +141,25 @@ class GameUI(GameObject):
             self.game_over_restart.rect.left - cursor.rect.width,
             self.game_over_exit_text.rect.centery - (cursor.rect.height / 2),
         )
+
+        self.score_ui.dirty = 1
+
+    #
+    # UI
+    #
+    def get_objects(self):
+        if self.mode == UIModes.SCORE:
+            self.score_ui.dirty = 1
+            return (self.score_ui,)
+        elif self.mode == UIModes.GAME_OVER:
+            self.title.dirty = 1
+            self.game_over_restart.dirty = 1
+            self.game_over_exit_text.dirty = 1
+            return (
+                self.title,
+                self.game_over_restart,
+                self.game_over_exit_text
+            )
 
     #
     # CORE
@@ -177,18 +175,9 @@ class GameUI(GameObject):
         )
         self.create_game_over_screen()
 
-        # Start image
-        self.image = Surface((self.screen_w, self.screen_h))
-        self.image.set_colorkey((0, 0, 0))
-
-        # Base rect
-        self.rect = self.image.get_rect()
-
         # Start with score
         self.start_score()
 
     def update(self, delta):
         if self.mode == UIModes.SCORE:
             self.update_score()
-            self.image.fill(Color(0, 0, 0, 0))
-            self.image.blit(*self.score_ui.get_draw())
