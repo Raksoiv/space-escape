@@ -16,6 +16,12 @@ class Player(SpriteCollideObject):
     friction = 150
     box_collider_scale = .75
 
+    def set_start_position(self):
+        self.set_pos(
+            0,
+            (self.screen_h - self.rect.height) / 2
+        )
+
     def start(self):
         self.start_box_collider()
 

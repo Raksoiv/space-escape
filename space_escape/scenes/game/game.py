@@ -247,6 +247,9 @@ class Game(Scene):
         self.render_group.add(self.player, layer=PLAYER_LAYER)
         self.update_group.add(self.player)
 
+        # Set the player starting position
+        self.player.set_start_position()
+
     #
     # CORE
     #
@@ -295,6 +298,9 @@ class Game(Scene):
         self.player.start()
         self.ui.start()
         self.bg.start()
+
+        # Set the player starting position
+        self.player.set_start_position()
 
     def update(self):
         # Event handling
