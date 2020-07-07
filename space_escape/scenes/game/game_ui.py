@@ -2,16 +2,16 @@ import json
 import time
 
 from pygame import Color, Surface
-from space_escape.core.game_objects import GameObject, TextObject
-from space_escape.utils import colors
+from space_escape.core.game_objects import GameObject, SpriteObject, TextObject
 from space_escape.core.path import HIGHSCORES_BASEPATH
+from space_escape.utils import colors
 
 
 class UIModes:
     '''
     This class represent the possibles states for the UI
     '''
-    SCORE = 1
+    GAME = 1
     GAME_OVER = 2
 
 
@@ -21,7 +21,31 @@ class GameUI(GameObject):
     '''
     font_file = 'BalooChettan2-SemiBold.ttf'
     score = 0
-    mode = UIModes.SCORE
+    mode = UIModes.GAME
+
+    #
+    # PLAYERS LIVES
+    #
+    def create_player_lives(self) -> None:
+        '''
+        This function creates all the game objects related to the player
+        lives counter
+        '''
+        self.player_lives = [
+            SpriteObject('playerLife1_blue.png')
+            for _ in range(3)
+        ]
+
+        # Set on the screen
+        y_pos = 10
+        x_pos = self.screen_w - self.player_lives[0].rect.width - 10
+
+        for i in range(3):
+            self.player_lives[i].set_pos(
+                x_pos,
+                y_pos
+            )
+            x_pos -= self.player_lives[i].rect.width + 10
 
     #
     # SCORE
@@ -74,8 +98,8 @@ class GameUI(GameObject):
         of the game
         '''
         self.start_time = time.time()
+        self.mode = UIModes.GAME
         self.score_ui.dirty = 1
-        self.mode = UIModes.SCORE
 
     #
     # GAMEOVER
@@ -148,9 +172,11 @@ class GameUI(GameObject):
     # UI
     #
     def get_objects(self):
-        if self.mode == UIModes.SCORE:
+        if self.mode == UIModes.GAME:
             self.score_ui.dirty = 1
-            return (self.score_ui,)
+            for i in range(len(self.player_lives)):
+                self.player_lives[i].dirty = 1
+            return (self.score_ui, *self.player_lives)
         elif self.mode == UIModes.GAME_OVER:
             self.title.dirty = 1
             self.game_over_restart.dirty = 1
@@ -173,11 +199,12 @@ class GameUI(GameObject):
             font_color=colors.white,
             font_size=36,
         )
+        self.create_player_lives()
         self.create_game_over_screen()
 
         # Start with score
         self.start_score()
 
     def update(self, delta):
-        if self.mode == UIModes.SCORE:
+        if self.mode == UIModes.GAME:
             self.update_score()
