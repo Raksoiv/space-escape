@@ -3,7 +3,7 @@ from pygame.mixer import Sound
 from space_escape.core.game_objects import Background, Cursor
 from space_escape.core.scene import Scene
 from space_escape.core.path import get_asset_path
-from space_escape.core.settings import DEBUG
+from space_escape.core.settings import DEBUG, SOUND
 
 from .main_menu import MainMenu
 from .highscore import HighScore
@@ -28,7 +28,9 @@ class Menu(Scene):
         self.background_sound = Sound(
             get_asset_path('sounds', 'bensound-menu.ogg')
         )
-        self.background_sound.play(loops=-1)
+
+        if SOUND:
+            self.background_sound.play(loops=-1)
         self.background_sound.set_volume(.25)
 
         # Game object creation

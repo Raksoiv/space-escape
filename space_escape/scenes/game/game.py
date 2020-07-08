@@ -8,6 +8,7 @@ from space_escape.core.colliders import box_collide
 from space_escape.core.game_objects import Cursor
 from space_escape.core.path import get_asset_path
 from space_escape.core.scene import Scene
+from space_escape.core.settings import SOUND
 from space_escape.utils import events
 
 from .enemy import Enemy
@@ -247,9 +248,12 @@ class Game(Scene):
         self.ui.start_score()
         self.phase = 0
         self.bg.start()
-        self.sound.play()
         self.render_group.add(self.player, layer=PLAYER_LAYER)
         self.update_group.add(self.player)
+
+        # Start the music
+        if SOUND:
+            self.sound.play(loop=-1)
 
         # Set the player starting position
         self.player.set_start_position()
@@ -268,7 +272,8 @@ class Game(Scene):
             get_asset_path('sounds', 'bensound-game.ogg')
         )
         self.sound.set_volume(.2)
-        self.sound.play()
+        if SOUND:
+            self.sound.play(loop=-1)
 
         self.lose_sound = Sound(
             get_asset_path('sounds', 'sfx_lose.ogg')
