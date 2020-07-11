@@ -209,24 +209,28 @@ class Game(Scene):
     #
     # Player System
     #
-    def player_collide(self):
+    def player_collide(self, enemy: Enemy):
         '''
         This method handles the case when the player hits an enemy
         Will trigger the game over ui
         '''
-        self.player.kill()
-        self.sound.fadeout(100)
-        self.lose_sound.play()
-        self.ui.start_game_over(self.cursor)
-        self.cursor.add(
-            self.event_group,
-            self.update_group,
-        )
-        self.render_group.add(
-            *self.ui.get_objects(),
-            self.cursor,
-            layer=UI_LAYER
-        )
+        if self.player.lives > 1:
+            self.player.damage()
+            enemy.kill()
+        else:
+            self.player.kill()
+            self.sound.fadeout(100)
+            self.lose_sound.play()
+            self.ui.start_game_over(self.cursor)
+            self.cursor.add(
+                self.event_group,
+                self.update_group,
+            )
+            self.render_group.add(
+                *self.ui.get_objects(),
+                self.cursor,
+                layer=UI_LAYER
+            )
 
     #
     # Restart System
@@ -253,10 +257,13 @@ class Game(Scene):
 
         # Start the music
         if SOUND:
-            self.sound.play(loop=-1)
+            self.sound.play(loops=-1)
 
         # Set the player starting position
         self.player.set_start_position()
+
+        # Refund player lives
+        self.player.reset_life()
 
     #
     # CORE
@@ -273,7 +280,7 @@ class Game(Scene):
         )
         self.sound.set_volume(.2)
         if SOUND:
-            self.sound.play(loop=-1)
+            self.sound.play(loops=-1)
 
         self.lose_sound = Sound(
             get_asset_path('sounds', 'sfx_lose.ogg')
@@ -322,8 +329,9 @@ class Game(Scene):
             self.update_phase()
 
             # Collision handling
-            if spritecollideany(self.player, self.enemies, box_collide):
-                self.player_collide()
+            enemy: Enemy = spritecollideany(self.player, self.enemies, box_collide)
+            if enemy:
+                self.player_collide(enemy)
         else:
             if self.cursor.selected is not None:
                 if self.cursor.selected == 0:
