@@ -46,6 +46,16 @@ class GameUI(GameObject):
                 y_pos
             )
             x_pos -= self.player_lifes[i].rect.width + 10
+            self.player_lifes[i].dirty = 1
+
+    def decrease_player_lifes(self) -> None:
+        '''
+        This functions allow for decrease in one the number of ui lifes
+        that the player has
+        If the player has no more lifes this function does nothing
+        '''
+        if len(self.player_lifes) > 0:
+            self.player_lifes.pop()
 
     #
     # SCORE
@@ -178,10 +188,12 @@ class GameUI(GameObject):
                 self.player_lifes[i].dirty = 1
             return (self.score_ui, *self.player_lifes)
         elif self.mode == UIModes.GAME_OVER:
+            self.score_ui.dirty = 1
             self.title.dirty = 1
             self.game_over_restart.dirty = 1
             self.game_over_exit_text.dirty = 1
             return (
+                self.score_ui,
                 self.title,
                 self.game_over_restart,
                 self.game_over_exit_text

@@ -215,12 +215,22 @@ class Game(Scene):
         Will trigger the game over ui
         '''
         if self.player.lifes > 1:
+            # Remove the ui so lifes can be redraw
+            self.render_group.remove(*self.ui.get_objects())
             self.player.damage()
             enemy.kill()
+            self.ui.decrease_player_lifes()
+            self.render_group.add(
+                *self.ui.get_objects(),
+                layer=UI_LAYER,
+            )
+
         else:
             self.player.kill()
             self.sound.fadeout(100)
+            self.render_group.remove(*self.ui.get_objects())
             self.lose_sound.play()
+
             self.ui.start_game_over(self.cursor)
             self.cursor.add(
                 self.event_group,
@@ -252,7 +262,9 @@ class Game(Scene):
         self.ui.start_score()
         self.phase = 0
         self.bg.start()
+        self.ui.create_player_lifes()
         self.render_group.add(self.player, layer=PLAYER_LAYER)
+        self.render_group.add(*self.ui.get_objects(), layer=UI_LAYER)
         self.update_group.add(self.player)
 
         # Start the music
