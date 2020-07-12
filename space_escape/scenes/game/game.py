@@ -214,7 +214,7 @@ class Game(Scene):
         This method handles the case when the player hits an enemy
         Will trigger the game over ui
         '''
-        if self.player.lives > 1:
+        if self.player.lifes > 1:
             self.player.damage()
             enemy.kill()
         else:
@@ -262,7 +262,7 @@ class Game(Scene):
         # Set the player starting position
         self.player.set_start_position()
 
-        # Refund player lives
+        # Refund player lifes
         self.player.reset_life()
 
     #

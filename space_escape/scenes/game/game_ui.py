@@ -24,28 +24,28 @@ class GameUI(GameObject):
     mode = UIModes.GAME
 
     #
-    # PLAYERS LIVES
+    # PLAYER LIFES
     #
-    def create_player_lives(self) -> None:
+    def create_player_lifes(self) -> None:
         '''
         This function creates all the game objects related to the player
-        lives counter
+        lifes counter
         '''
-        self.player_lives = [
+        self.player_lifes = [
             SpriteObject('playerLife1_blue.png')
             for _ in range(3)
         ]
 
         # Set on the screen
         y_pos = 10
-        x_pos = self.screen_w - self.player_lives[0].rect.width - 10
+        x_pos = self.screen_w - self.player_lifes[0].rect.width - 10
 
         for i in range(3):
-            self.player_lives[i].set_pos(
+            self.player_lifes[i].set_pos(
                 x_pos,
                 y_pos
             )
-            x_pos -= self.player_lives[i].rect.width + 10
+            x_pos -= self.player_lifes[i].rect.width + 10
 
     #
     # SCORE
@@ -174,9 +174,9 @@ class GameUI(GameObject):
     def get_objects(self):
         if self.mode == UIModes.GAME:
             self.score_ui.dirty = 1
-            for i in range(len(self.player_lives)):
-                self.player_lives[i].dirty = 1
-            return (self.score_ui, *self.player_lives)
+            for i in range(len(self.player_lifes)):
+                self.player_lifes[i].dirty = 1
+            return (self.score_ui, *self.player_lifes)
         elif self.mode == UIModes.GAME_OVER:
             self.title.dirty = 1
             self.game_over_restart.dirty = 1
@@ -199,7 +199,7 @@ class GameUI(GameObject):
             font_color=colors.white,
             font_size=36,
         )
-        self.create_player_lives()
+        self.create_player_lifes()
         self.create_game_over_screen()
 
         # Start with score
